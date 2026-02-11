@@ -80,8 +80,8 @@ const About = () => {
   const socialLinks = [
     { Icon: FaTwitter as React.ElementType, url: "https://twitter.com" },
     { Icon: PiGlobeSimple as React.ElementType, url: "https://www.gdgcace.in/" },
-    { Icon: FaLinkedin as React.ElementType, url: "https://www.linkedin.com/..." },
-    { Icon: FaInstagram as React.ElementType, url: "https://www.instagram.com/..." },
+    { Icon: FaLinkedin as React.ElementType, url: "https://www.linkedin.com/company/google-developer-student-club-ace" },
+    { Icon: FaInstagram as React.ElementType, url: "https://www.instagram.com/gdgc_ace" },
   ];
 
   return (
