@@ -1,11 +1,12 @@
+import React from "react"
 import { PiGlobeSimple } from "react-icons/pi"
 import { FaInstagram, FaLinkedin, FaTwitter } from "react-icons/fa"
 import { useRef } from "react"
 import { useGSAP } from "@gsap/react"
 import gsap from "gsap"
-// import ScrollTrigger from "gsap/ScrollTrigger"
+import ScrollTrigger from "gsap/ScrollTrigger"
 
-// gsap.registerPlugin(ScrollTrigger)
+gsap.registerPlugin(ScrollTrigger)
 
 
 const About = () => {
@@ -14,31 +15,39 @@ const About = () => {
 
   useGSAP(() => {
     const tl = gsap.timeline({
-      // scrollTrigger: {
-      //   trigger: container.current,
-      //   start: "top 80%",
-      //   end: "bottom 40%",
-      //   toggleActions: "play none none reverse",
-      //   markers: false
-      // },
+      scrollTrigger: {
+        trigger: container.current,
+        start: "top 60%",
+        end: "bottom 40%",
+        toggleActions: "play none none reverse",
+        markers: false
+      },
       defaults: { ease: "power3.out" }
     })
 
     tl.from(".animate-text", {
-      x: 200,
+      x: -800,
       opacity: 0,
       stagger: 0.1,
       duration: 2,
+      delay:0.8,
       ease: "elastic.out(1, 0.6)",
       yoyo: true
     })
       .from(".image-animation", {
-        x: 500,
-        y: 100,
+        x: 800,
+        pin:true,
         opacity: 0,
         duration: 1,
-        ease: "circ",
+        ease: "elastic.out(1, 0.6)",
         yoyo: true
+      },"<").from(".copyright-animation",{
+        y: -80,
+        opacity: 0,
+        duration: 1,
+        ease: "elastic",
+        yoyo: true,
+        stagger:0.2
       })
       .from(".button-animation", {
         x: 200,
@@ -47,7 +56,7 @@ const About = () => {
         duration: 0.6,
         ease: "power1.inOut",
         yoyo: true
-      })
+      },"<0.5")
       .from(".arrow", {
         x: -150,
         opacity: 0,
@@ -56,16 +65,24 @@ const About = () => {
         yoyo: true
       })
       .from(".icons-animation", {
-        y: 80,
+        y: -80,
+        x:-40,
         pin: true,
         opacity: 0,
         duration: 1,
-        ease: "bounce.out()",
+        ease: "elastic",
         yoyo: true,
+        stagger:0.2
       })
 
-
   }, { scope: container })
+
+  const socialLinks = [
+    { Icon: FaTwitter as React.ElementType, url: "https://twitter.com" },
+    { Icon: PiGlobeSimple as React.ElementType, url: "https://www.gdgcace.in/" },
+    { Icon: FaLinkedin as React.ElementType, url: "https://www.linkedin.com/company/google-developer-student-club-ace" },
+    { Icon: FaInstagram as React.ElementType, url: "https://www.instagram.com/gdgc_ace" },
+  ];
 
   return (
     <div
@@ -117,27 +134,16 @@ const About = () => {
 
       {/* Footer Section */}
       <footer className="w-full py-6 px-20 md:py-8 flex flex-col md:flex-row justify-between text-center items-center gap-6 ">
-        <p className="text-white text-xl md:text-2xl">
+        <p className="text-white text-xl md:text-2xl copyright-animation">
           © 2025-26 GDGC ACE
         </p>
-        <div className="flex gap-6 md:gap-10 ">
-          <a href="https://need_link_here.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="icons-animation"><FaTwitter className=" text-4xl md:text-5xl hover:text-[#F27C06] active:scale-110" /></a>
-          <a href="https://www.gdgcace.in/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="icons-animation"><PiGlobeSimple className=" text-4xl md:text-5xl bg-white p-1 text-[#211E1B] rounded-full hover:bg-[#F27C06] active:scale-110" /></a>
-          <a href="https://www.linkedin.com/company/google-developer-student-club-ace/posts/?feedView=all"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="icons-animation"><FaLinkedin className=" text-4xl md:text-5xl hover:text-[#F27C06] active:scale-110" /></a>
-          <a href="https://www.instagram.com/gdgc_ace?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw=="
-            target="_blank"
-            rel="noopener noreferrer"
-            className="icons-animation"><FaInstagram className=" text-4xl md:text-5xl hover:text-[#F27C06] active:scale-110" /></a>
-        </div>
+        <div className="flex gap-6 md:gap-10">
+    {socialLinks.map(({ Icon, url }, index) => (
+      <a key={index} href={url} target="_blank" rel="noopener noreferrer" className="icons-animation">
+        <Icon className={`text-4xl md:text-5xl active:scale-110 ${url.includes('gdgcace') ? 'bg-white p-1 text-[#211E1B] rounded-full hover:bg-[#F27C06]' : 'hover:text-[#F27C06]'}`} />
+      </a>
+    ))}
+  </div>
 
       </footer >
 
