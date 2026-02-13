@@ -6,13 +6,13 @@ import * as THREE from "three";
 import MouseWaveScene from "../ui/mouse-wave-scene";
 
 const ASSETS = {
-  drill: "/images/mission_logs/drill.svg",
+  drill: "/images/mission_logs/drill.gif",
   globe: "/images/mission_logs/globe.svg",
   mesh: "/images/mission_logs/mesh.svg",
   milkyway: "/images/mission_logs/milkyway.png",
   rightArrowFilled: "/images/mission_logs/rightArrow_filled.svg",
   rightArrowOutline: "/images/mission_logs/rightArrow_outline.svg",
-  sponge: "/images/mission_logs/sponge.svg",
+  sponge: "/images/mission_logs/sponge.gif",
   bottomGlobe: "/images/mission_logs/bottom_right_globe.png",
 };
 
@@ -68,28 +68,13 @@ const MissionLogs = () => {
             <div className="absolute top-2 left-2 w-2 h-2 border border-primary/50" />
             <div className="absolute bottom-2 right-2 w-2 h-2 border border-primary/50" />
 
-            <motion.img
-              src={ASSETS.sponge}
-              alt="Sponge Structure"
-              className="w-full h-auto max-h-[20vh] object-contain drop-shadow-[0_0_20px_rgba(242,124,6,0.3)]"
-              animate={{
-                scaleY: [1, 0.9, 1.1, 0.95, 1],
-                scaleX: [1, 1.1, 0.9, 1.05, 1],
-                rotate: [0, -2, 2, -1, 0],
-                filter: [
-                  "brightness(1)",
-                  "brightness(1.1)",
-                  "brightness(0.9)",
-                  "brightness(1)",
-                ],
-              }}
-              transition={{
-                duration: 6,
-                repeat: Infinity,
-                ease: "easeInOut",
-                times: [0, 0.25, 0.5, 0.75, 1],
-              }}
-            />
+            <div className="relative w-full h-full flex items-center justify-center p-4">
+               <img
+                src={ASSETS.sponge}
+                alt="Sponge Structure"
+                className="w-full h-full object-contain "
+              />
+            </div>
           </div>
 
           {/* Title Info Card */}
@@ -202,29 +187,10 @@ const MissionLogs = () => {
 
             {/* Drill Container */}
             <div className="relative w-full h-[80%] flex items-center justify-center">
-              <img
+             <img
                 src={ASSETS.drill}
-                className="h-full w-auto object-contain opacity-20 absolute"
-              />
-
-              {/* drilling Mask animation */}
-              <motion.div
-                className="h-full w-full absolute inset-0"
-                style={{
-                  WebkitMaskImage: `url(${ASSETS.drill})`,
-                  WebkitMaskSize: "contain",
-                  WebkitMaskRepeat: "no-repeat",
-                  WebkitMaskPosition: "center",
-                  maskImage: `url(${ASSETS.drill})`,
-                  maskSize: "contain",
-                  maskRepeat: "no-repeat",
-                  maskPosition: "center",
-                  background:
-                    "linear-gradient(45deg, transparent 40%, rgba(242,124,6,0.8) 50%, transparent 60%)",
-                  backgroundSize: "200% 200%",
-                }}
-                animate={{ backgroundPosition: ["0% 0%", "100% 100%"] }}
-                transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                className="h-full w-auto object-contain absolute"
+                alt="Drill"
               />
             </div>
           </div>
@@ -310,7 +276,7 @@ const MissionLogs = () => {
 
               {/* 3D Canvas */}
               <div className="absolute inset-[15%] rounded-full overflow-hidden">
-                <Canvas
+                {/* <Canvas
                   camera={{ position: [0, 0, 4] }}
                   gl={{ alpha: true }}
                   style={{ background: "transparent" }}
@@ -320,7 +286,7 @@ const MissionLogs = () => {
                   <Suspense fallback={null}>
                     <RotatingSphere />
                   </Suspense>
-                </Canvas>
+                </Canvas> */}
               </div>
             </div>
           </div>

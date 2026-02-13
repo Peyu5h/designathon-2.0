@@ -434,12 +434,12 @@ const HeroSection = () => {
             <div className="text-xs md:text-sm lg:text-xl font-medium tracking-[0.2em] text-white mt-2 lowercase text-center ">
               <DecryptedText
                 text="Design beyond the known universe"
-                speed={40}
-                maxIterations={15}
+                speed={90}
+                maxIterations={20}
                 sequential={true}
                 revealDirection="center"
                 className="text-neutral-100 uppercase font-black "
-                encryptedClassName="text-neutral-300"
+                encryptedClassName="text-neutral-300 uppercase font-black"
                 animateOn="view"
               />
             </div>
@@ -448,11 +448,11 @@ const HeroSection = () => {
 
         {/* === SOCIAL ICONS BOTTOM-LEFT === */}
         <div className="absolute bottom-0 left-0 z-50 drop-shadow-2xl shadow-none outline-none border-0">
-          <div className="relative bg-white border-none rounded-tr-3xl p-4 md:p-5 pr-8 md:pr-10 pl-6 md:pl-8 flex items-center space-x-0 shadow-none outline-none border-0">
+          <div className="relative bg-white border-none rounded-tr-4xl p-4 md:p-5 pr-8 md:pr-10 pl-6 md:pl-8 flex items-center space-x-0 shadow-none outline-none border-0">
             {/* inverted corner right */}
 
             <div
-              className="absolute bottom-0 -right-13 w-8 h-8 bg-white -translate-x-px shadow-none outline-none border-0"
+              className="absolute bottom-[-8px] -right-8 w-10 h-10 bg-white -translate-x-px shadow-none outline-none border-0"
               style={{
                 maskImage:
                   "radial-gradient(circle at 100% 0, transparent 2rem, black 2rem)",

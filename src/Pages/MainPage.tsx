@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import About from "@/Components/About/About";
 import Faqs from "@/Components/FAQs/Faqs";
 import HeroSection from "@/Components/HeroSection/HeroSection";
@@ -8,12 +8,22 @@ import MissionRewards from "@/Components/MissionRewards/MissionRewards";
 import Sponsors from "@/Components/Sponsors/Sponsors";
 import TimeLine from "@/Components/TimeLine/TimeLine";
 import { useLenis } from "@/lib/Lenis";
+import Preloader from "@/Components/Preloader";
+
+const ASSETS_TO_PRELOAD = [
+  "/images/mission_logs/drill.gif",
+  "/images/mission_logs/sponge.gif",
+  "/images/mission_logs/globe.svg",
+  "/images/mission_logs/mesh.svg",
+  "/images/mission_logs/milkyway.png",
+];
 
 const MainPage = () => {
+  const [isLoading, setIsLoading] = useState(true);
   const lenis = useLenis();
 
   useEffect(() => {
-    if (!lenis) return;
+    if (!lenis || isLoading) return;
 
     let isScrolling = false;
 
@@ -64,33 +74,40 @@ const MainPage = () => {
       // @ts-ignore
       lenis.off('scroll', handleScroll);
     };
-  }, [lenis]);
+  }, [lenis, isLoading]);
+
   return (
     <>
-      <div id="home">
-        <HeroSection />
-      </div>
-      <div id="mission-logs">
-        <MissionLogs />
-      </div>
-      <div id="rewards">
-        <MissionRewards />
-      </div>
-      <div id="timeline">
-        <TimeLine />
-      </div>
-      <div id="guidelines">
-        <MissionGuidelines />
-      </div>
-      <div id="sponsors">
-        <Sponsors />
-      </div>
-      <div id="faqs">
-        <Faqs />
-      </div>
-      <div id="about">
-        <About />
-      </div>
+      <Preloader assets={ASSETS_TO_PRELOAD} onComplete={() => setIsLoading(false)} />
+      
+      {!isLoading && (
+        <div className="animate-in fade-in duration-700">
+          <div id="home">
+            <HeroSection />
+          </div>
+          <div id="mission-logs">
+            <MissionLogs />
+          </div>
+          <div id="rewards">
+            <MissionRewards />
+          </div>
+          <div id="timeline">
+            <TimeLine />
+          </div>
+          <div id="guidelines">
+            <MissionGuidelines />
+          </div>
+          <div id="sponsors">
+            <Sponsors />
+          </div>
+          <div id="faqs">
+            <Faqs />
+          </div>
+          <div id="about">
+            <About />
+          </div>
+        </div>
+      )}
     </>
   );
 };
