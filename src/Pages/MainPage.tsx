@@ -39,7 +39,7 @@ const MainPage = () => {
 
       // Hero -> Mission Logs (Scroll Down)
       // Trigger if user is at the top (Hero) and starts scrolling down
-      if (scroll < heroHeight - threshold && velocity > 1.5) { 
+      if (scroll < heroHeight - threshold && velocity > 1.5) {
         // velocity > 1.5 ensures a deliberate scroll, not just a tiny nudge
         isScrolling = true;
         lenis.scrollTo("#mission-logs", {
@@ -50,7 +50,7 @@ const MainPage = () => {
            }
         });
       }
-      
+
       // Mission Logs -> Hero (Scroll Up)
       // Trigger if user is near the start of Mission Logs and scrolls up
       // mission-logs starts at heroHeight approximately
