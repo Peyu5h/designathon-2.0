@@ -40,7 +40,7 @@ const TimeLine = () => {
         duration: 1
       })
       .to(sectionRef.current, {
-        x: "-400vw",
+        x: "-420vw",
         ease: "none",
         duration: 7
       })
@@ -87,22 +87,23 @@ const TimeLine = () => {
   return (
     <section className="overflow-hidden bg-background">
       <div ref={triggerRef}>
-        <div ref={sectionRef} className="h-screen w-[500vw] flex flex-row relative">
+        <div ref={sectionRef} className="h-screen w-[520vw] flex flex-row relative">
           <img
-            src="images/timeline/timelinePath.svg"
+            src="images/timeline/timelinePathFinalv3.svg"
             alt="timeline path"
-            className="w-[450vw] h-full"
+            className="w-[450vw] h-full z-0"
           />
-          <div className="absolute inset-0 w-full h-dvh">
-            <div className="flex gap-18 size-full">
-              <div className="h-full w-[70vw]"><TlCard1 ref={cardOneRef} /></div>
-              <div className="h-full w-[70vw]"><TlCard2 ref={cardTwoRef} /></div>
-              <div className="h-full w-[70vw]"><TlCard3 ref={cardThreeRef} /></div>
-              <div className="h-full w-[70vw]"><TlCard4 ref={cardFourRef} /></div>
-              <div className="h-full w-[70vw]"><TlCard5 ref={cardFiveRef} /></div>
-              <div className="h-full w-[70vw]"><TlCard6 ref={cardSixRef} /></div>
+          <div className="absolute inset-0 w-full h-dvh z-10">
+            <div className="flex gap-24 size-full">
+              <div className="h-full w-[68vw]"><TlCard1 ref={cardOneRef} /></div>
+              <div className="h-full w-[68vw]"><TlCard2 ref={cardTwoRef} /></div>
+              <div className="h-full w-[68vw]"><TlCard3 ref={cardThreeRef} /></div>
+              <div className="h-full w-[66vw]"><TlCard4 ref={cardFourRef} /></div>
+              <div className="h-full w-[72vw]"><TlCard5 ref={cardFiveRef} /></div>
+              <div className="h-full w-[64vw]"><TlCard6 ref={cardSixRef} /></div>
+              <div className="h-full w-[50vw] z-10"><Venue /></div>
             </div>
-            <div className="h-full w-[70vw]"><Venue /></div>
+            
           </div>
         </div>
       </div>

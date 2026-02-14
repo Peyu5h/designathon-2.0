@@ -41,7 +41,7 @@ const TlCard2 = forwardRef<TlCardHandle>((_props, ref) => {
   return (
     <div
       ref={tlCardRef}
-      className="relative max-w-[60vw] h-full pl-28 "
+      className="relative max-w-[60vw] h-full mx-auto"
     >
       <div className="h-[80vh] w-full flex flex-col items-center mt-2">
         <div className="z-10 text-center">
@@ -102,12 +102,12 @@ const TlCard2 = forwardRef<TlCardHandle>((_props, ref) => {
           </h2>
         </div>
       </div>
-
+{/* 
       <img
         src="images/timeline/rectangle.svg"
         alt=""
         className="h-6 w-6 mx-auto mt-2"
-      />
+      /> */}
     </div>
   );
 });
