@@ -16,7 +16,7 @@ const LeftColumn = () => {
         <div className="relative z-10">
           <div className="flex items-center gap-3 mb-4">
             <div className="w-3 h-3 bg-orange-500" />
-            <h3 className="text-white text-xl font-bold tracking-wider">
+            <h3 className="text-white text-sm lg:text-2xl font-bold tracking-wider">
               Guideline 1
             </h3>
           </div>
