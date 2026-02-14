@@ -1,11 +1,15 @@
-
+import MainGridContainer from "./Components/MainGridContainer";
+import OranageBox from "./Components/OranageBox";
 
 const MissionGuidelines = () => {
-    return (
-        <section className="min-h-screen w-full bg-background flex items-center justify-center border-t border-white/10 relative">
-            <h2 className="text-4xl font-bold uppercase tracking-widest text-white/20 z-10">Mission Guidelines</h2>
-        </section>
-    );
+  return (
+    <section className="w-full bg-black lg:bg-background border-t border-white/10 relative overflow-hidden min-h-screen">
+      {/* Orange corner decorations */}
+      <OranageBox/>
+      {/* Main Grid Container */}
+      <MainGridContainer/>
+    </section>
+  );
 };
 
 export default MissionGuidelines;
