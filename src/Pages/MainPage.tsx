@@ -1,4 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import About from "@/Components/About/About";
 import Faqs from "@/Components/FAQs/Faqs";
 import HeroSection from "@/Components/HeroSection/HeroSection";
@@ -21,6 +23,32 @@ const ASSETS_TO_PRELOAD = [
 const MainPage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const lenis = useLenis();
+
+  // scale-down Mission Logs as Rewards enters
+  useLayoutEffect(() => {
+    if (isLoading) return;
+    gsap.registerPlugin(ScrollTrigger);
+
+    const missionLogs = document.querySelector(".mission-logs-sticky");
+    const rewards = document.getElementById("rewards");
+    if (!missionLogs || !rewards) return;
+
+    const ctx = gsap.context(() => {
+      gsap.to(missionLogs, {
+        scale: 0.92,
+        opacity: 0.5,
+        filter: "blur(2px)",
+        scrollTrigger: {
+          trigger: rewards,
+          start: "top 90%",
+          end: "top 20%",
+          scrub: true,
+        },
+      });
+    });
+
+    return () => ctx.revert();
+  }, [isLoading]);
 
   useEffect(() => {
     if (!lenis || isLoading) return;
@@ -85,25 +113,30 @@ const MainPage = () => {
           <div id="home">
             <HeroSection />
           </div>
-          <div id="mission-logs">
-            <MissionLogs />
+
+          {/* stack-over container: Mission Logs stays sticky while Rewards slides up */}
+          <div className="relative">
+            <div id="mission-logs" className="sticky top-0 z-10 mission-logs-sticky">
+              <MissionLogs />
+            </div>
+            <div id="rewards" className="relative z-20">
+              <MissionRewards />
+            </div>
           </div>
-          <div id="rewards">
-            <MissionRewards />
-          </div>
-          <div id="timeline">
+
+          <div id="timeline" className="relative z-20">
             <TimeLine />
           </div>
-          <div id="guidelines">
+          <div id="guidelines" className="relative z-20">
             <MissionGuidelines />
           </div>
-          <div id="sponsors">
+          <div id="sponsors" className="relative z-20">
             <Sponsors />
           </div>
-          <div id="faqs">
+          <div id="faqs" className="relative z-20">
             <Faqs />
           </div>
-          <div id="about">
+          <div id="about" className="relative z-20">
             <About />
           </div>
         </div>
