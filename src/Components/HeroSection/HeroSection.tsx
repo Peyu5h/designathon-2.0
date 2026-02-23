@@ -1,13 +1,32 @@
 import { useEffect, useState, useRef, useCallback } from "react";
-import { Globe, Linkedin, Twitter, Instagram } from "lucide-react";
 import { RetroGrid } from "../retro-grid";
-import NavigationMenu from "../sterling-gate-kinetic-navigation";
-import CountUp from "../CountUp.jsx";
-import ShinyText from "../ShinyText.jsx";
-import DecryptedText from "../DecryptedText.jsx";
-import FloatingObject from "./Floating.js";
+import NavigationMenu from "../navigationMenu";
+import CountUp from "../CountUp";
+import ShinyText from "../ShinyText";
+import DecryptedText from "../DecryptedText";
+import FloatingObject from "./Floating";
+import { assets } from "@/lib/assets";
+import SocialIcons from "./SocialIcons";
 
-import { AnimatedTooltip } from "../ui/animated-tooltip";
+// inverted corner svg used in countdown and prize sections
+const InvertedCornerSVG = ({
+  className,
+  path,
+}: {
+  className: string;
+  path: string;
+}) => (
+  <svg
+    className={className}
+    fill="currentColor"
+    stroke="currentColor"
+    strokeWidth="1.5"
+    strokeLinejoin="round"
+    viewBox="0 0 32 32"
+  >
+    <path d={path} />
+  </svg>
+);
 
 const HeroSection = () => {
   const [timeLeft, setTimeLeft] = useState({
@@ -16,64 +35,6 @@ const HeroSection = () => {
     mins: "00",
     secs: "00",
   });
-
-  const socialItems = [
-    {
-      id: 1,
-      name: "Twitter",
-      designation: "Follow Updates",
-      image:
-        "https://res.cloudinary.com/dkysrpdi6/image/upload/v1767816590/Background_o5aaeh.png",
-      icon: (
-        <Twitter
-          size={24}
-          className="text-neutral-400 group-hover:text-accent transition-colors duration-300"
-        />
-      ),
-      href: "#",
-    },
-    {
-      id: 2,
-      name: "Website",
-      designation: "Visit GDG",
-      image: "/images/gdg-logo.png",
-      icon: (
-        <Globe
-          size={24}
-          className="text-neutral-400 group-hover:text-accent transition-colors duration-300"
-        />
-      ),
-      href: "#",
-    },
-    {
-      id: 3,
-      name: "LinkedIn",
-      designation: "Connect with us",
-      image:
-        "https://res.cloudinary.com/dkysrpdi6/image/upload/v1767816590/Background_o5aaeh.png",
-      icon: (
-        <Linkedin
-          size={24}
-          className="text-neutral-400 group-hover:text-accent group-hover:fill-accent transition-colors duration-300"
-        />
-      ),
-      href: "#",
-    },
-    {
-      id: 4,
-      name: "Instagram",
-      designation: "See our gallery",
-      image:
-        "https://res.cloudinary.com/dkysrpdi6/image/upload/v1767816590/Background_o5aaeh.png",
-      icon: (
-        <Instagram
-          size={24}
-          className="text-neutral-400 group-hover:text-accent transition-colors duration-300"
-        />
-      ),
-      href: "#",
-    },
-  ];
 
   const [mouseOffset, setMouseOffset] = useState({ x: 0, y: 0 });
   const sectionRef = useRef<HTMLElement>(null);
@@ -108,7 +69,7 @@ const HeroSection = () => {
     return () => clearInterval(interval);
   }, []);
 
-  // smooth parallax with raf lerp
+  // smooth parallax via raf lerp
   useEffect(() => {
     const animate = () => {
       const lerp = 0.06;
@@ -145,14 +106,21 @@ const HeroSection = () => {
     targetOffset.current = { x: 0, y: 0 };
   }, []);
 
+  const countdownUnits = [
+    { value: timeLeft.days, label: "days", accent: true },
+    { value: timeLeft.hours, label: "hours", accent: true },
+    { value: timeLeft.mins, label: "mins", accent: false },
+    { value: timeLeft.secs, label: "secs", accent: false },
+  ];
+
   return (
     <section
       ref={sectionRef}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      className="relative h-screen w-full bg-white overflow-hidden flex flex-col pt-3 pb-3 px-3"
+      className="relative h-screen min-h-[100dvh] w-full bg-white p-1 md:p-3 overflow-hidden flex flex-col"
     >
-      <div className="relative w-full h-full bg-neutral-900 rounded-[2.5rem] overflow-hidden flex flex-col items-center justify-center text-foreground font-sans">
+      <div className="relative flex-1 w-full bg-neutral-900 rounded-[2.5rem] overflow-hidden flex flex-col items-center justify-center text-foreground font-sans">
         <RetroGrid
           className="absolute inset-0 z-0 h-full w-full opacity-60 pointer-events-none"
           angle={65}
@@ -161,19 +129,18 @@ const HeroSection = () => {
           darkLineColor="#f1f5f9"
         />
 
+        {/* gdgc logo */}
         <div className="absolute z-12 -top-16 w-28 h-28 rounded-full left-1/2 -translate-x-1/2 bg-white" />
-
-        {/* === GDGC LOGO TOP === */}
-        <div className="absolute -top-2.5 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center">
+        <div className="absolute md:-top-2.5 -top-1 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center">
           <img
-            src="/images/gdg-logo.png"
+            src={assets.hero.gdgLogo}
             alt="GDG Logo"
             className="w-12 h-12 md:w-14 md:h-14 object-contain"
+            decoding="async"
             draggable={false}
           />
         </div>
 
-        {/* hamburger */}
         <NavigationMenu />
 
         {/* gdg text below logo */}
@@ -181,9 +148,11 @@ const HeroSection = () => {
           <h2 className="text-sm font-inter md:text-base lg:text-2xl font-semibold tracking-wide text-white leading-tight">
             Google Developer Groups
           </h2>
-          <p className=" font-inter text-[10px] md:text-xs lg:text-sm text-neutral-300  leading-tight">
-            <span className="text-accent font-medium">On Campus</span>
-            <span className="mx-1 text-neutral-500">·</span>
+          <p className="font-inter text-[10px] md:text-xs lg:text-sm text-neutral-300 leading-tight">
+            <span className="text-accent font-medium hidden md:inline">
+              On Campus
+            </span>
+            <span className="md:mx-1 text-neutral-500">·</span>
             <span>Atharva College of Engineering</span>
           </p>
           <p className="text-[10px] md:text-[14px] text-neutral-300 tracking-widest uppercase pt-1">
@@ -191,81 +160,50 @@ const HeroSection = () => {
           </p>
         </div>
 
-        {/* === COUNTDOWN TOP-LEFT === */}
-        <div
-          style={{ zIndex: 50 }}
-          className="absolute  top-24 left-0 drop-shadow-xl"
-        >
+        {/* countdown panel */}
+        <div className="absolute top-24 left-0 z-50 lg:drop-shadow-xl">
           <div className="relative bg-white rounded-r-3xl py-3 md:py-4 pl-3 md:pl-4 pr-1.5 flex flex-row items-center">
-            {/* rounded white corners */}
-            <div
-              className="absolute -bottom-6 left-0 w-6 h-6 bg-white"
-              style={{
-                maskImage:
-                  "radial-gradient(circle at 100% 100%, transparent 1.5rem, black 1.5rem)",
-                WebkitMaskImage:
-                  "radial-gradient(circle at 100% 100%, transparent 1.5rem, black 1.5rem)",
-              }}
+            <InvertedCornerSVG
+              className="absolute -bottom-[23.5px] left-[-1px] w-6 h-6 text-white"
+              path="M0 0v24C0 10.745 10.745 0 24 0z"
             />
-            {/* rounded white corners */}
-            <div
-              className="absolute -top-6 left-0 w-6 h-6 bg-white"
-              style={{
-                maskImage:
-                  "radial-gradient(circle at 100% 0%, transparent 1.5rem, black 1.5rem)",
-                WebkitMaskImage:
-                  "radial-gradient(circle at 100% 0%, transparent 1.5rem, black 1.5rem)",
-              }}
+            <InvertedCornerSVG
+              className="absolute -top-[18px] left-[-1px] w-6 h-6 text-white"
+              path="M0 24V0C0 13.255 10.745 24 24 24z"
             />
 
-            <div className="flex flex-col items-center gap-1.5 md:gap-2 pr-4 py-4 ">
-              <div className="flex flex-col items-center leading-none ">
-                <span className="text-base md:text-2xl font-bold text-accent font-inter">
-                  {timeLeft.days}
-                </span>
-                <span className="text-[7px] md:text-[12px] uppercase tracking-wider text-black/80 mt-0.5 font-bold">
-                  days
-                </span>
-              </div>
-              <div className="flex flex-col items-center leading-none">
-                <span className="text-base md:text-2xl font-bold text-accent font-inter">
-                  {timeLeft.hours}
-                </span>
-                <span className="text-[7px] md:text-[12px] uppercase tracking-wider  text-black/80 mt-0.5 font-bold">
-                  hours
-                </span>
-              </div>
-              <div className="flex flex-col items-center leading-none">
-                <span className="text-base md:text-2xl font-bold text-neutral-700 font-inter">
-                  {timeLeft.mins}
-                </span>
-                <span className="text-[7px] md:text-[12px] uppercase tracking-wider text-black/80 mt-0.5 font-bold">
-                  mins
-                </span>
-              </div>
-              <div className="flex flex-col items-center leading-none">
-                <span className="text-base md:text-2xl font-bold text-neutral-700 font-inter">
-                  {timeLeft.secs}
-                </span>
-                <span className="text-[7px] md:text-[12px] uppercase tracking-wider text-black/80 mt-0.5 font-bold">
-                  secs
-                </span>
-              </div>
+            <div className="flex flex-col items-center gap-1.5 md:gap-2 pr-4 py-4">
+              {countdownUnits.map((unit) => (
+                <div
+                  key={unit.label}
+                  className="flex flex-col items-center leading-none"
+                >
+                  <span
+                    className={`text-base md:text-2xl font-bold font-inter ${
+                      unit.accent ? "text-accent" : "text-neutral-700"
+                    }`}
+                  >
+                    {unit.value}
+                  </span>
+                  <span className="text-[7px] md:text-[12px] uppercase tracking-wider text-black/80 mt-0.5 font-bold">
+                    {unit.label}
+                  </span>
+                </div>
+              ))}
             </div>
 
-            {/* vertical "Countdown" label */}
             <div
-              className="text-[7px] md:text-[12px] uppercase tracking-[0.15em] text-black/90  font-medium ml-1 select-none"
+              className="text-[7px] md:text-[12px] uppercase tracking-[0.15em] text-black/90 font-medium ml-1 select-none"
               style={{
                 writingMode: "vertical-rl",
                 textOrientation: "mixed",
                 transform: "rotate(180deg)",
               }}
-            ></div>
+            />
           </div>
         </div>
 
-        {/* === BACKGROUND 2.0 TEXT === */}
+        {/* background 2.0 text */}
         <div className="absolute inset-0 flex items-center justify-center z-1 pointer-events-none select-none overflow-hidden">
           <span
             className="font-bold text-[#3a2a1d] opacity-80 leading-none tracking-tighter"
@@ -275,99 +213,82 @@ const HeroSection = () => {
           </span>
         </div>
 
-        {/* === FLOATING 3D OBJECTS === */}
-
-        {/* topleft camera - large, partially behind countdown */}
+        {/* floating objects */}
         <FloatingObject
-          src="/images/hero/topleft-camera.png"
+          src={assets.hero.topleftCamera}
           alt="Camera tool"
-          wrapperClassName="z-8 top-0 left-[-2%] md:left-[2%] animate-float-1"
-          innerClassName="w-44 h-44 md:w-56 md:h-56 lg:w-108 lg:h-108"
+          wrapperClassName="z-8 top-[-5px] left-[-20px] md:top-0 md:left-[2%] animate-float-1"
+          innerClassName="w-56 h-56 md:w-56 md:h-56 lg:w-108 lg:h-108"
           parallaxFactor={0.6}
           mouseOffset={mouseOffset}
         />
-
         <FloatingObject
-          src="/images/hero/bolt.png"
+          src={assets.hero.bolt}
           alt="Bolt"
-          wrapperClassName="z-8 top-48 left-[-2%] md:left-[24%] animate-float-1"
-          innerClassName="w-5 h-5 md:w-32 md:h-32 rotate-[0deg]"
+          wrapperClassName="z-8 top-56 left-[10%] md:left-[24%] animate-float-1"
+          innerClassName="w-16 h-16 md:w-32 md:h-32 rotate-[0deg]"
           parallaxFactor={0.9}
           mouseOffset={mouseOffset}
         />
-
-        {/* topright camera / tools - bigger */}
         <FloatingObject
-          src="/images/hero/topright-camera.png"
+          src={assets.hero.toprightCamera}
           alt="Tools"
-          wrapperClassName="z-5 top-[8%] right-[0%] md:right-[3%] lg:right-[0%] animate-float-2"
-          innerClassName="w-28 h-24 md:w-40 md:h-32 lg:w-108 lg:h-76 "
+          wrapperClassName="z-5 top-24 right-[-24px] md:top-[8%] md:right-[3%] lg:right-[0%] animate-float-2"
+          innerClassName="w-64 h-56 md:w-40 md:h-32 lg:w-108 lg:h-76"
           parallaxFactor={0.5}
           mouseOffset={mouseOffset}
         />
-
-        {/* laptop left side - bigger */}
         <FloatingObject
-          src="/images/hero/laptop.png"
+          src={assets.hero.laptop}
           alt="Laptop"
-          wrapperClassName="z-5 bottom-[6%] left-[0%] md:left-[2%] lg:left-[5%] animate-float-3"
-          innerClassName="w-36 h-28 md:w-48 md:h-36 lg:w-96 lg:h-87 rotate-[-8deg]"
+          wrapperClassName="z-5 bottom-[16%] left-[5%] md:bottom-[6%] md:left-[2%] lg:left-[5%] animate-float-3"
+          innerClassName="w-48 h-48 md:w-48 md:h-36 lg:w-96 lg:h-87 rotate-[-8deg]"
           parallaxFactor={0.7}
           mouseOffset={mouseOffset}
         />
-
-        {/* bolt 1 - left of astronaut, upper area */}
         <FloatingObject
-          src="/images/hero/bolt.png"
+          src={assets.hero.bolt}
           alt="Bolt"
-          wrapperClassName="z-5 top-[16%] left-[28%] md:left-[28%] animate-float-4"
-          innerClassName="w-5 h-5 md:w-12 md:h-12 rotate-[280deg]"
+          wrapperClassName="z-5 top-[20%] left-[32%] md:top-[16%] md:left-[28%] animate-float-4"
+          innerClassName="w-10 h-10 md:w-12 md:h-12 rotate-[280deg]"
           parallaxFactor={0.9}
           mouseOffset={mouseOffset}
         />
-
-        {/* bolt 2 - right side mid */}
         <FloatingObject
-          src="/images/hero/bolt.png"
+          src={assets.hero.bolt}
           alt="Bolt"
-          wrapperClassName="z-5 top-[28%] right-[14%] md:right-[18%] animate-float-5"
-          innerClassName="w-4 h-4 md:w-24 md:h-12 rotate-[140deg]"
+          wrapperClassName="z-5 top-[32%] right-[20%] md:top-[28%] md:right-[18%] animate-float-5"
+          innerClassName="w-12 h-12 md:w-24 md:h-12 rotate-[140deg]"
           parallaxFactor={1.0}
           mouseOffset={mouseOffset}
         />
-
-        {/* bolt 5 - bottom center on grid/white intersection */}
         <FloatingObject
-          src="/images/hero/bolt.png"
+          src={assets.hero.bolt}
           alt="Bolt"
-          wrapperClassName=" -bottom-8 left-[46%] md:left-[48%] animate-float-3 [animation-delay:1s]"
-          innerClassName="w-6 h-6 md:w-32 md:h-32 rotate-[40deg]"
+          wrapperClassName="-bottom-4 left-[46%] md:-bottom-8 md:left-[48%] animate-float-3 [animation-delay:1s]"
+          innerClassName="w-16 h-16 md:w-32 md:h-32 rotate-[40deg]"
           parallaxFactor={0.5}
           mouseOffset={mouseOffset}
         />
-
-        {/* bolt 6 - right side lower */}
         <FloatingObject
-          src="/images/hero/bolt.png"
+          src={assets.hero.bolt}
           alt="Bolt"
-          wrapperClassName="z-5 bottom-[40%] right-[12%] animate-float-5 [animation-delay:1.6s]"
-          innerClassName="w-4 h-4 md:w-24 md:h-24 rotate-270"
+          wrapperClassName="z-5 bottom-[45%] right-[18%] md:bottom-[40%] md:right-[12%] animate-float-5 [animation-delay:1.6s]"
+          innerClassName="w-12 h-12 md:w-24 md:h-24 rotate-270"
           parallaxFactor={0.7}
           mouseOffset={mouseOffset}
         />
-
-        {/* bottomright camera / hammer tool - bigger */}
         <FloatingObject
-          src="/images/hero/bottomright-camera.png"
+          src={assets.hero.bottomrightCamera}
           alt="Tool"
-          wrapperClassName="z-5 bottom-[12%] right-[16%] md:right-[16%] animate-float-4 [animation-delay:1.4s]"
-          innerClassName="w-20 h-28 md:w-28 md:h-36 lg:w-56 lg:h-64 rotate-[12deg]"
+          wrapperClassName="z-5 bottom-[15%] right-[5%] md:bottom-[12%] md:right-[16%] animate-float-4 [animation-delay:1.4s]"
+          innerClassName="w-48 h-56 md:w-28 md:h-36 lg:w-56 lg:h-64 rotate-[12deg]"
           parallaxFactor={0.7}
           mouseOffset={mouseOffset}
         />
 
-        {/* === ASTRONAUT (highest z among scene objects, centered) === */}
-        <div className="absolute z-7 pointer-events-none left-1/2 -translate-x-1/2 top-[8%] md:top-[20%]">
+        {/* astronaut */}
+        <div className="absolute z-7 pointer-events-none left-1/2 -translate-x-1/2 top-[32%] md:top-[20%] w-78 h-78 md:w-100 md:h-100 lg:w-128 lg:h-128">
           <div className="animate-float-3">
             <div
               className="will-change-transform backface-hidden"
@@ -376,9 +297,10 @@ const HeroSection = () => {
               }}
             >
               <img
-                src="/images/hero/astronaut.png"
+                src={assets.hero.astronaut}
                 alt="Astronaut floating in space"
-                className="w-72 h-72 md:w-100 md:h-100 lg:w-128 lg:h-128 object-contain select-none"
+                className="w-78 h-78 md:w-100 md:h-100 lg:w-128 lg:h-128 object-contain select-none"
+                decoding="async"
                 style={{
                   filter: "drop-shadow(0 0 50px rgba(0,0,0,0.5))",
                 }}
@@ -388,16 +310,14 @@ const HeroSection = () => {
           </div>
         </div>
 
-        {/* === MAIN TEXT CONTENT === */}
+        {/* main text content */}
         <div
           className="absolute z-12 text-center flex flex-col items-center w-full px-4"
           style={{ top: "52%", transform: "translateY(-15%)" }}
         >
-          {/* subtle radial gradient behind text for visibility */}
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[140%] h-[140%] -z-10 bg-[radial-gradient(closest-side,rgba(0,0,0,0.5)_0%,rgba(0,0,0,0)_100%)] blur-2xl pointer-events-none" />
 
-          {/* designathon with shiny animation */}
-          <div className=" rounded-xl p-2 px-4 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+          <div className="rounded-xl p-2 px-4 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
             <ShinyText
               text="D E S I G N A T H O N"
               speed={2}
@@ -408,37 +328,22 @@ const HeroSection = () => {
             />
           </div>
 
-          <div className="w-full flex justify-center ">
-            {/*<SplitText
-              text=""
-              className="spacebound-title"
-              delay={80}
-              duration={1}
-              ease="power3.out"
-              splitType="chars"
-              from={{ opacity: 0, y: 60, rotateX: -40 }}
-              to={{ opacity: 1, y: 0, rotateX: 0 }}
-              threshold={0.1}
-              rootMargin="-50px"
-              textAlign="center"
-              tag="h1"
-            />*/}
-            <h1 className="text-4xl spacebound-title md:text-2xl lg:text-7xl font-bold tracking-tighter text-white leading-tight ">
+          <div className="w-full flex justify-center">
+            <h1 className="text-4xl spacebound-title md:text-2xl lg:text-7xl font-bold tracking-tighter text-white leading-tight">
               SPACEBOUND
             </h1>
           </div>
 
-          {/* tagline */}
           <div className="relative pt-4 w-full max-w-xl mx-auto drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
             <div className="absolute inset-x-0 h-px bg-linear-to-r from-transparent via-accent to-transparent opacity-30 blur-sm" />
-            <div className="text-xs md:text-sm lg:text-xl font-medium tracking-[0.2em] text-white mt-2 lowercase text-center ">
+            <div className="text-xs md:text-sm lg:text-xl font-medium tracking-[0.2em] text-white mt-2 lowercase text-center">
               <DecryptedText
                 text="Design beyond the known universe"
                 speed={90}
                 maxIterations={20}
                 sequential={true}
                 revealDirection="center"
-                className="text-neutral-100 uppercase font-black "
+                className="text-neutral-100 uppercase font-black"
                 encryptedClassName="text-neutral-300 uppercase font-black"
                 animateOn="view"
               />
@@ -446,69 +351,30 @@ const HeroSection = () => {
           </div>
         </div>
 
-        {/* === SOCIAL ICONS BOTTOM-LEFT === */}
-        <div className="absolute bottom-0 left-0 z-20 drop-shadow-2xl shadow-none outline-none border-0">
-          <div className="relative bg-white border-none rounded-tr-4xl p-4 md:p-5 pr-8 md:pr-10 pl-6 md:pl-8 flex items-center space-x-0 shadow-none outline-none border-0">
-            {/* inverted corner right */}
+        <SocialIcons />
 
-            <div
-              className="absolute bottom-[-8px] -right-8 w-10 h-10 bg-white -translate-x-px shadow-none outline-none border-0"
-              style={{
-                maskImage:
-                  "radial-gradient(circle at 100% 0, transparent 2rem, black 2rem)",
-                WebkitMaskImage:
-                  "radial-gradient(circle at 100% 0, transparent 2rem, black 2rem)",
-              }}
-            />
-            {/* inverted corner top */}
-            <div
-              className="absolute -top-8 left-0 w-8 h-8 bg-white translate-y-px shadow-none outline-none border-0 "
-              style={{
-                maskImage:
-                  "radial-gradient(circle at 100% 0, transparent 2rem, black 2rem)",
-                WebkitMaskImage:
-                  "radial-gradient(circle at 100% 0, transparent 2rem, black 2rem)",
-              }}
-            />
-
-            <AnimatedTooltip items={socialItems} />
-          </div>
-        </div>
-
-        {/* === PRIZE POOL + JOIN NOW BOTTOM-RIGHT === */}
-        <div className="absolute bottom-0 right-0 z-20 drop-shadow-2xl">
+        {/* prize pool + join now */}
+        <div className="absolute bottom-0 right-0 z-20 lg:drop-shadow-2xl">
           <div className="relative bg-white rounded-tl-4xl p-2 flex flex-row items-center">
-            {/* inverted corner top */}
-            <div
-              className="absolute -top-8 right-0 w-8 h-8 bg-white translate-y-px"
-              style={{
-                maskImage:
-                  "radial-gradient(circle at 0 0, transparent 2rem, black 2rem)",
-                WebkitMaskImage:
-                  "radial-gradient(circle at 0 0, transparent 2rem, black 2rem)",
-              }}
+            <InvertedCornerSVG
+              className="absolute -top-[31.5px] right-[-1px] w-8 h-8 text-white"
+              path="M32 32V0C32 17.67 17.67 32 0 32z"
             />
-            {/* inverted corner left */}
-            <div
-              className="absolute bottom-0 -left-8 w-8 h-8 bg-white translate-x-px"
-              style={{
-                maskImage:
-                  "radial-gradient(circle at 0 0, transparent 2rem, black 2rem)",
-                WebkitMaskImage:
-                  "radial-gradient(circle at 0 0, transparent 2rem, black 2rem)",
-              }}
+            <InvertedCornerSVG
+              className="absolute bottom-[-1px] -left-[31.5px] w-8 h-8 text-white"
+              path="M32 32V0C32 17.67 17.67 32 0 32z"
             />
 
             <div className="pl-6 md:pl-8 pr-4 md:pr-6 py-3 md:py-4 flex flex-col items-center min-w-28 md:min-w-36">
               <div className="flex items-baseline leading-none">
                 <span className="text-5xl md:text-6xl font-bold text-black tracking-tighter">
-                  <CountUp to={100} from={0} duration={2.5} separator="" />
+                  <CountUp to={60} from={0} duration={1.5} separator="" />
                 </span>
                 <span className="text-2xl md:text-3xl ml-1 font-bold text-black">
                   k
                 </span>
               </div>
-              <span className="text-[8px] md:text-[13px] uppercase tracking-[0.2em] text-neutral-500 font-bold ">
+              <span className="text-[10px] md:text-[13px] uppercase tracking-[0.2em] text-neutral-500 font-bold">
                 prize pool
               </span>
             </div>

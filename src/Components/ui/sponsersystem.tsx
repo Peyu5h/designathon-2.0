@@ -127,7 +127,7 @@ useEffect(() => {
 
 
   return (
-    <div className="h-screen w-full bg-black">
+    <div className="h-full w-full bg-black">
       <Canvas camera={{
         position: isMobile ? [8, 6, 14] : [0, 8, 18],
         fov: isMobile ? 55 : 50,

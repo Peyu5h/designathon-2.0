@@ -1,52 +1,51 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
-const Preloader = ({
-  assets,
-  onComplete,
-}: {
-  assets: string[];
+interface PreloaderProps {
+  critical: string[];
+  deferred?: string[];
   onComplete: () => void;
-}) => {
+}
+
+// preloads critical assets (blocks), then deferred (background)
+const preloadImage = (src: string): Promise<void> =>
+  new Promise((resolve) => {
+    const img = new Image();
+    img.src = src;
+    img.onload = () => resolve();
+    img.onerror = () => resolve(); // don't block on failures
+  });
+
+const Preloader = ({ critical, deferred = [], onComplete }: PreloaderProps) => {
   const [progress, setProgress] = useState(0);
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
     let loadedCount = 0;
-    const total = assets.length;
-
-    const loadAsset = (src: string) => {
-      return new Promise((resolve, reject) => {
-        const img = new Image();
-        img.src = src;
-        img.onload = resolve;
-        img.onerror = reject;
-      });
-    };
+    const total = critical.length;
 
     const loadAll = async () => {
       await Promise.all(
-        assets.map(async (asset) => {
-          try {
-            await loadAsset(asset);
-          } catch (err) {
-            console.error("Failed to load asset:", asset, err);
-          } finally {
-            loadedCount++;
-            setProgress(Math.round((loadedCount / total) * 100));
-          }
+        critical.map(async (src) => {
+          await preloadImage(src);
+          loadedCount++;
+          setProgress(Math.round((loadedCount / total) * 100));
         })
       );
-      // Add a small delay for smooth transition even if fast
-      setTimeout(() => setIsLoaded(true), 500);
+      setTimeout(() => setIsLoaded(true), 400);
+
+      // fire-and-forget deferred assets in background
+      if (deferred.length > 0) {
+        deferred.forEach((src) => preloadImage(src));
+      }
     };
 
     loadAll();
-  }, [assets]);
+  }, [critical, deferred]);
 
   useEffect(() => {
     if (isLoaded) {
-      const timer = setTimeout(onComplete, 800); // Wait for exit animation
+      const timer = setTimeout(onComplete, 800);
       return () => clearTimeout(timer);
     }
   }, [isLoaded, onComplete]);

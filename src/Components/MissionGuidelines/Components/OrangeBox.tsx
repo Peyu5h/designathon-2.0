@@ -1,6 +1,4 @@
-import React from "react";
-
-const OranageBox = () => {
+const OrangeBox = () => {
   return (
     <>
       <div className="absolute top-4 left-4 grid grid-cols-2 grid-rows-2 gap-2">
@@ -17,4 +15,4 @@ const OranageBox = () => {
   );
 };
 
-export default OranageBox;
+export default OrangeBox;

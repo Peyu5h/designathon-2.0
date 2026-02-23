@@ -1,3 +1,5 @@
+import { assets } from "@/lib/assets";
+
 const MobileCard = ({
   image,
   imagePosition,
@@ -16,7 +18,7 @@ const MobileCard = ({
         <div
       className="absolute inset-0" // extra space so rotation doesn't clip
       style={{
-        backgroundImage: "url('/images/Guidelines/Galaxy-image.jpg')",
+        backgroundImage: `url('${assets.guidelines.galaxyImage}')`,
         backgroundSize: "450% 300%",
         backgroundPosition: imagePosition, // for position changing
         transform: transform, // for rotation
