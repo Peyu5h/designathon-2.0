@@ -1,5 +1,5 @@
-import MainGridContainer from "./components/MainGridContainer";
-import OrangeBox from "./components/OrangeBox";
+import MainGridContainer from "./Components/MainGridContainer";
+import OrangeBox from "./Components/OrangeBox";
 
 const MissionGuidelines = () => {
   return (
