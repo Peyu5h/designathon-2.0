@@ -5,7 +5,6 @@ import {
   useAnimationFrame,
   useTransform,
 } from "framer-motion";
-import "./ShinyText.css";
 
 interface ShinyTextProps {
   text: string;
@@ -116,6 +115,7 @@ const ShinyText = ({
   }, [pauseOnHover]);
 
   const gradientStyle = {
+    display: "inline-block" as const,
     backgroundImage: `linear-gradient(${spread}deg, ${color} 0%, ${color} 35%, ${shineColor} 50%, ${color} 65%, ${color} 100%)`,
     backgroundSize: "200% auto",
     WebkitBackgroundClip: "text",
@@ -125,7 +125,7 @@ const ShinyText = ({
 
   return (
     <motion.span
-      className={`shiny-text ${className}`}
+      className={className}
       style={{ ...gradientStyle, backgroundPosition }}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}

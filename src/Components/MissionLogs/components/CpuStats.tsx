@@ -1,6 +1,5 @@
 import AnimatedLoader from "./AnimatedLoader";
 
-// system resource stats panel
 const CpuStats = () => {
   return (
     <div className="font-octo text-[10px] font-medium text-white/70 leading-[1.6]">

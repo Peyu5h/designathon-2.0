@@ -1,10 +1,8 @@
-import React from "react";
+import { assets } from "@/lib/assets";
 import LeftColumn from "./LeftColumn";
 import CenterVisual from "./CenterVisual";
 import RightColumn from "./RightColumn";
 import MobileCard from "./MobileCard";
-
-/* ------------------ DATA ------------------ */
 
 const guidelineContent = [
   {
@@ -25,17 +23,13 @@ const guidelineContent = [
   },
 ];
 
-/* ------------------ MAIN CONTAINER ------------------ */
-
 const MainGridContainer = () => {
   return (
-    <div className="relative mx-auto h-full max-w-7xl px-4 py-12 md:px-6 lg:py-20">
-      {/* TITLE */}
-      <h2 className="mb-10 text-center text-4xl font-bold text-white md:text-7xl">
+    <div className="relative mx-auto h-full max-w-7xl px-4 py-4 md:px-6 lg:py-8">
+      <h2 className="mb-6 text-center text-4xl font-bold text-white md:text-7xl">
         MISSION GUIDELINES
       </h2>
 
-      {/* ---------------- MOBILE LAYOUT ---------------- */}
       <div className="mx-auto space-y-0 lg:hidden">
         <MobileCard
           image
@@ -59,7 +53,6 @@ const MainGridContainer = () => {
           transform="rotate(40deg) scale(1.5)"
         />
 
-        {/* LAST BLOCK WITH CTA */}
         <div className="grid grid-cols-2 gap-0">
           <div className="h-44 border border-white/20 bg-black/80 px-4 py-5 md:h-52 md:py-6">
             <div className="mb-5 flex items-center gap-3">
@@ -80,7 +73,7 @@ const MainGridContainer = () => {
             <div
               className="absolute inset-0"
               style={{
-                backgroundImage: "url('/images/Guidelines/Galaxy-image.jpg')",
+                backgroundImage: `url('${assets.guidelines.galaxyImage}')`,
                 backgroundSize: "450% 300%",
                 backgroundPosition: "75% 70%",
                 transform: "rotate(40deg) scale(1.5)",
@@ -98,7 +91,6 @@ const MainGridContainer = () => {
         </div>
       </div>
 
-      {/* ---------------- DESKTOP LAYOUT ---------------- */}
       <div className="hidden gap-6 lg:flex lg:flex-row">
         <LeftColumn />
         <CenterVisual />

@@ -1,18 +1,16 @@
 import { useRef } from "react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { gsap, ScrollTrigger } from "@/lib/gsap";
 import { useGSAP } from "@gsap/react";
+import { assets } from "@/lib/assets";
+import type { TlCardHandle } from "@/lib/types";
 
-import TlCard1 from "./timelineComponents/TlCard1";
-import type { TlCardHandle } from "./timelineComponents/TlCard1";
-import TlCard2 from "./timelineComponents/TlCard2";
-import TlCard3 from "./timelineComponents/TlCard3";
-import TlCard4 from "./timelineComponents/TlCard4";
-import TlCard5 from "./timelineComponents/TlCard5";
-import TlCard6 from "./timelineComponents/TlCard6";
-import Venue from "./timelineComponents/Venue";
-
-gsap.registerPlugin(ScrollTrigger);
+import TlCard1 from "./components/TlCard1";
+import TlCard2 from "./components/TlCard2";
+import TlCard3 from "./components/TlCard3";
+import TlCard4 from "./components/TlCard4";
+import TlCard5 from "./components/TlCard5";
+import TlCard6 from "./components/TlCard6";
+import Venue from "./components/Venue";
 
 const TimeLine = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
@@ -32,78 +30,97 @@ const TimeLine = () => {
         end: "+=4000",
         scrub: 0.6,
         pin: true,
-      }
-    })
+      },
+    });
+
     horizontalScrollTl
-      .to(sectionRef.current, {
-        x: 0,
-        duration: 1
-      })
-      .to(sectionRef.current, {
-        x: "-420vw",
-        ease: "none",
-        duration: 7
-      })
+      .to(sectionRef.current, { x: 0, duration: 1 })
+      .to(sectionRef.current, { x: "-420vw", ease: "none", duration: 7 });
 
     if (cardOneRef.current) {
-      gsap.timeline({
-        scrollTrigger: {
-          trigger: cardOneRef.current.element,
-          start: "top 60%",
-          end: "bottom+=200 bottom",
-          scrub: true,
-        },
-      }).add(cardOneRef.current.animate())
+      gsap
+        .timeline({
+          scrollTrigger: {
+            trigger: cardOneRef.current.element,
+            start: "top 60%",
+            end: "bottom+=200 bottom",
+            scrub: true,
+          },
+        })
+        .add(cardOneRef.current.animate());
     }
+
     [cardTwoRef, cardThreeRef].forEach((ref) => {
       if (ref.current) {
-        gsap.timeline({
-          scrollTrigger: {
-            trigger: ref.current.element,
-            containerAnimation: horizontalScrollTl,
-            start: "center 60%",
-            end: "bottom+=200 center",
-            scrub: true,
-          },
-        }).add(ref.current.animate());
-      }
-    });
-    [cardFourRef, cardFiveRef, cardSixRef].forEach((ref) => {
-      if (ref.current) {
-        gsap.timeline({
-          scrollTrigger: {
-            trigger: ref.current.element,
-            containerAnimation: horizontalScrollTl,
-            start: "top 60%",
-            end: "bottom+=200 60%",
-            scrub: true,
-          },
-        }).add(ref.current.animate());
+        gsap
+          .timeline({
+            scrollTrigger: {
+              trigger: ref.current.element,
+              containerAnimation: horizontalScrollTl,
+              start: "center 60%",
+              end: "bottom+=200 center",
+              scrub: true,
+            },
+          })
+          .add(ref.current.animate());
       }
     });
 
+    [cardFourRef, cardFiveRef, cardSixRef].forEach((ref) => {
+      if (ref.current) {
+        gsap
+          .timeline({
+            scrollTrigger: {
+              trigger: ref.current.element,
+              containerAnimation: horizontalScrollTl,
+              start: "top 60%",
+              end: "bottom+=200 60%",
+              scrub: true,
+            },
+          })
+          .add(ref.current.animate());
+      }
+    });
   });
 
   return (
     <section className="overflow-hidden bg-background">
       <div ref={triggerRef}>
-        <div ref={sectionRef} className="h-screen w-[520vw] flex flex-row relative">
+        <div
+          ref={sectionRef}
+          className="h-screen w-[520vw] flex flex-row relative"
+        >
           <img
-            src="images/timeline/timelinePathFinalv3.svg"
+            src={assets.timeline.path}
             alt="timeline path"
+            loading="lazy"
+            decoding="async"
             className="w-[450vw] h-full z-0"
           />
           <div className="absolute inset-0 w-full h-dvh z-10">
             <div className="flex gap-24 size-full">
-              <div className="h-full w-[68vw]"><TlCard1 ref={cardOneRef} /></div>
-              <div className="h-full w-[68vw]"><TlCard2 ref={cardTwoRef} /></div>
-              <div className="h-full w-[68vw]"><TlCard3 ref={cardThreeRef} /></div>
-              <div className="h-full w-[66vw]"><TlCard4 ref={cardFourRef} /></div>
-              <div className="h-full w-[72vw]"><TlCard5 ref={cardFiveRef} /></div>
-              <div className="h-full w-[64vw]"><TlCard6 ref={cardSixRef} /></div>
-              <div className="h-full w-[50vw] z-10"><Venue /></div>
+              <div className="h-full w-[68vw]">
+                <TlCard1 ref={cardOneRef} />
+              </div>
+              <div className="h-full w-[68vw]">
+                <TlCard2 ref={cardTwoRef} />
+              </div>
+              <div className="h-full w-[68vw]">
+                <TlCard3 ref={cardThreeRef} />
+              </div>
+              <div className="h-full w-[66vw]">
+                <TlCard4 ref={cardFourRef} />
+              </div>
+              <div className="h-full w-[72vw]">
+                <TlCard5 ref={cardFiveRef} />
+              </div>
+              <div className="h-full w-[64vw]">
+                <TlCard6 ref={cardSixRef} />
+              </div>
+              <div className="h-full w-[50vw] z-10">
+                <Venue />
+              </div>
             </div>
-            
           </div>
         </div>
       </div>
