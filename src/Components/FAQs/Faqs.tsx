@@ -48,7 +48,7 @@ const Faqs = () => {
           FAQ<span className="text-white lowercase">s</span>
         </h1>
       </div>
-      <div className="absolute inset-0 top-0 w-full h-full opacity-90 pointer-events-none">
+      <div className="md:hidden absolute inset-0 top-0 w-full h-full opacity-90 pointer-events-none">
         <OptimizedImage
           src={assets.faqs.gif}
           alt="FAQ Animate"
