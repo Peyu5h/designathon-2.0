@@ -25,7 +25,7 @@ const RegisterRing = () => {
             fill="none"
           />
           <text
-            fontSize="8"
+            fontSize="10"
             fill="#1a1a1a"
             fontWeight="700"
             letterSpacing="0.12em"

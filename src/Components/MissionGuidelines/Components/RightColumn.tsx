@@ -1,22 +1,18 @@
-import React from "react";
+import { assets } from "@/lib/assets";
 
 const RightColumn = () => {
   return (
     <div className="flex flex-col gap-4 w-full lg:w-1/4">
-      {/* Guideline 3 */}
       <div
-        className="h-64 backdrop-blur-md  p-6 border border-white/20 flex flex-col justify-start pt-8 overflow-hidden"
+        className="h-64 backdrop-blur-md p-6 border border-white/20 flex flex-col justify-start pt-8 overflow-hidden"
         style={{
-          backgroundImage: "url('/images/Guidelines/Galaxy-image.jpg')",
+          backgroundImage: `url('${assets.guidelines.galaxyImage}')`,
           backgroundSize: "450% 300%",
           backgroundPosition: "100% 0%",
         }}
-      > 
-          {/* for warm filter and Darkness */}
+      >
         <div className="absolute inset-0 bg-orange-700/30 mix-blend-overlay" />
         <div className="absolute inset-0 bg-black/20" />
-
-        <div className="absolute inset-0 " />
         <div className="relative z-10">
           <div className="flex items-center gap-3 mb-4">
             <div className="w-3 h-3 bg-orange-500" />
@@ -33,16 +29,7 @@ const RightColumn = () => {
         </div>
       </div>
 
-      {/* Guideline 4 */}
-      <div
-        className="h-64 backdrop-blur-md  p-6 border border-white/20 flex flex-col justify-start pt-8 overflow-hidden"
-        // style={{
-        //   backgroundImage: "url('/images/Guidelines/Galaxy-image.jpg')",
-        //   backgroundSize: "260% 260%",
-        //   backgroundPosition: "35% 50%",
-        // }}
-      >
-        <div className="absolute inset-0 " />
+      <div className="h-64 backdrop-blur-md p-6 border border-white/20 flex flex-col justify-start pt-8 overflow-hidden">
         <div className="relative z-10">
           <div className="flex items-center gap-3 mb-4">
             <div className="w-3 h-3 bg-orange-500" />

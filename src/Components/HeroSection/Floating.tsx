@@ -1,3 +1,5 @@
+import OptimizedImage from "@/Components/OptimizedImage";
+
 const PARALLAX_ROTATION_CAP = 5;
 const PARALLAX_TRANSLATE_CAP = 10;
 
@@ -35,9 +37,10 @@ const FloatingObject = ({
           transform: `translate3d(${tx}px, ${ty}px, 0) rotateX(${rx}deg) rotateY(${ry}deg)`,
         }}
       >
-        <img
+        <OptimizedImage
           src={src}
           alt={alt}
+          eager
           className={`w-full h-full object-contain select-none ${imgClassName}`}
           draggable={false}
         />

@@ -77,7 +77,7 @@ export default function MouseWaveScene({
       style={{
         width: "100%",
         height: dimensions.height > 0 ? dimensions.height : "auto",
-        minHeight: "200px", // ← Ensure minimum height
+        minHeight: "100px", // ← Ensure minimum height
       }}
     >
       {isMobile ? (

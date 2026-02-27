@@ -1,95 +1,211 @@
-import GalaxyModel from "@/Components/MissionRewards/components/GalaxyModel";
-import { LeftBar } from "./constants/SvgExporter";
-import { RightBar } from "./constants/SvgExporter";
-import TiltedCard from "./components/TiledCard";
-import FirstPrize from "@/Components/MissionRewards/constants/FirstPrize.svg";
-import SecondPrize from "@/Components/MissionRewards/constants/SecondPrize.svg";
-import ThirdPrize from "@/Components/MissionRewards/constants/ThirdPrize.svg";
 import { useRef, useLayoutEffect } from "react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-
-gsap.registerPlugin(ScrollTrigger);
+import { gsap, ScrollTrigger } from "@/lib/gsap";
+import GalaxyModel from "./components/GalaxyModel";
+import { LeftBar, RightBar } from "./constants/SvgExporter";
+import TiltedCard from "./components/TiltedCard";
+import FirstPrize from "./constants/FirstPrize.svg";
+import SecondPrize from "./constants/SecondPrize.svg";
+import ThirdPrize from "./constants/ThirdPrize.svg";
 
 const MissionRewards = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
-  const paddingRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const cardsRef = useRef<HTMLDivElement[]>([]);
+  const titleRef = useRef<HTMLDivElement>(null);
 
   useLayoutEffect(() => {
-    const ctx = gsap.context(() => {
-      const expandTrigger = {
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: "top 85%",
-          end: "top top",
-          scrub: true,
-        },
-        duration: 1,
-        ease: "power2.out",
-      };
+    // We use matchMedia to define different animations for desktop and mobile
+    const mm = gsap.matchMedia();
 
-      gsap.to(paddingRef.current, {
-        ...expandTrigger,
-        padding: 0,
-      });
+    mm.add(
+      {
+        isDesktop: "(min-width: 768px)",
+        isMobile: "(max-width: 767px)",
+      },
+      (context) => {
+        const { isDesktop, isMobile } = context.conditions as {
+          isDesktop: boolean;
+          isMobile: boolean;
+        };
 
-      gsap.to(contentRef.current, {
-        ...expandTrigger,
-        borderRadius: 0,
-        boxShadow: "0 -40px 80px rgba(0,0,0,0.8)",
-      });
+        // Section scale-up: only on desktop to avoid mobile layout thrashing
+        if (isDesktop) {
+          gsap.fromTo(
+            contentRef.current,
+            {
+              scale: 0.94,
+              borderRadius: "2rem",
+            },
+            {
+              scale: 1,
+              borderRadius: 0,
+              duration: 1,
+              ease: "power2.out",
+              force3D: true,
+              scrollTrigger: {
+                trigger: sectionRef.current,
+                start: "top 80%",
+                end: "top top",
+                scrub: true,
+              },
+            },
+          );
+        }
 
-      // fade out the shadow after expansion completes
-      gsap.to(contentRef.current, {
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: "top top",
-          end: "top -10%",
-          scrub: true,
-        },
-        boxShadow: "0 0px 0px rgba(0,0,0,0)",
-        duration: 1,
-      });
+        // Common title entrance
+        gsap.fromTo(
+          titleRef.current,
+          { y: 30, opacity: 0 },
+          {
+            y: 0,
+            opacity: 1,
+            duration: 1,
+            ease: "power3.out",
+            scrollTrigger: {
+              trigger: sectionRef.current,
+              start: "top 50%", // Adjusted for better timing on mobile
+              end: "top top",
+              scrub: true,
+            },
+            force3D: true,
+          },
+        );
 
-      // 2. Cards sequence animation (Pinned)
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: "top top",
-          end: "+=2500", // Extends the scroll distance
-          scrub: 1,
-          pin: true,
-        },
-      });
+        const cards = cardsRef.current.filter(Boolean);
 
-      gsap.set(cardsRef.current, { y: 100, autoAlpha: 0 });
+        if (isDesktop) {
+          // ===============================
+          // DESKTOP ANIMATION: TILT -> SPREAD
+          // ===============================
+          const revealOrder = [2, 0, 1]; // 3rd -> 2nd -> 1st
 
-      tl.to({}, { duration: 0.1 }) // slight pause 
-        .to(cardsRef.current[2], {
-          y: 0,
-          autoAlpha: 1,
-          duration: 1,
-          ease: "power2.out",
-        }) // 3rd Prize
-        .to({}, { duration: 0.5 }) // Scroll space
-        .to(cardsRef.current[0], {
-          y: 0,
-          autoAlpha: 1,
-          duration: 1,
-          ease: "power2.out",
-        }) // 2nd Prize 
-        .to({}, { duration: 0.5 }) // Scroll space
-        .to(cardsRef.current[1], {
-          y: 0,
-          autoAlpha: 1,
-          duration: 1,
-          ease: "power2.out",
-        }) // 1st Prize
-        .to({}, { duration: 0.5 }); 
-    }, sectionRef);
-    return () => ctx.revert();
+          // initial: cards tilted with slight offset
+          cards.forEach((card, i) => {
+            const direction = i === 1 ? 0 : i === 0 ? -1 : 1;
+            gsap.set(card, {
+              y: 40,
+              rotateX: 15,
+              rotateY: direction * 8,
+              scale: 0.92,
+              transformPerspective: 800,
+              xPercent: 0,
+              yPercent: 0,
+              opacity: 1,
+              force3D: true,
+              position: "static", // ensuring static on desktop
+            });
+          });
+
+          // pinned timeline for sequential reveal
+          const tl = gsap.timeline({
+            scrollTrigger: {
+              trigger: sectionRef.current,
+              start: "top top",
+              end: "+=2200",
+              scrub: 1,
+              pin: true,
+            },
+          });
+
+          tl.to({}, { duration: 0.15 });
+
+          // reveal each card: tilt to straight
+          revealOrder.forEach((cardIndex, i) => {
+            if (!cards[cardIndex]) return;
+            tl.to(
+              cards[cardIndex],
+              {
+                y: 0,
+                rotateX: 0,
+                rotateY: 0,
+                scale: 1,
+                duration: 0.8,
+                ease: "power3.out",
+                force3D: true,
+              },
+              i === 0 ? ">" : ">-0.25",
+            );
+          });
+
+          tl.to({}, { duration: 0.4 });
+        } else if (isMobile) {
+          // ===============================
+          // MOBILE ANIMATION: ROLLING TIRE Effect
+          // ===============================
+
+          // Reset cards to default state for absolute positioning
+          cards.forEach((card) => {
+            // Card starting state: pushed way down, rotated back slightly, and hidden
+            gsap.set(card, {
+              yPercent: 150, // Start below screen relative to its container
+              rotateX: -45, // Tilted backwards like a tire rolling in
+              scale: 0.8,
+              opacity: 0,
+              transformOrigin: "center center",
+              transformPerspective: 1200,
+              force3D: true,
+              position: "absolute",
+            });
+          });
+
+          const tl = gsap.timeline({
+            scrollTrigger: {
+              trigger: sectionRef.current,
+              start: "top top",
+              end: "+=3500", // longer scroll path for 3 cards sequence
+              scrub: 1,
+              pin: true,
+            },
+          });
+
+          tl.to({}, { duration: 0.1 }); // slight delay before first actions
+
+          const animationDuration = 1;
+          const rotateAmount = 45; // How much it tilts backwards/forwards
+
+          // Mobile reveal order: 1st, 2nd, 3rd. Array indices: [0]=2nd, [1]=1st, [2]=3rd.
+          const mobileRevealOrder = [1, 0, 2];
+
+          mobileRevealOrder.forEach((cardIndex, i) => {
+            const card = cards[cardIndex];
+
+            // 1. Roll IN from bottom
+            tl.to(
+              card,
+              {
+                yPercent: 0,
+                rotateX: 0,
+                scale: 1,
+                opacity: 1,
+                duration: animationDuration,
+                ease: "power2.inOut", // matching ease to sync perfectly with exit
+              },
+              i === 0 ? ">" : "<",
+            ); // "<" makes it start at the exact same time as the previous animation finishes (the hold/exit phase)
+
+            // Hold the card in the center for a brief moment
+            tl.to({}, { duration: 0.6 });
+
+            // 2. Roll OUT to top (unless it's the very last card)
+            if (i < mobileRevealOrder.length - 1) {
+              tl.to(card, {
+                yPercent: -200, // Move completely out of view
+                rotateX: rotateAmount, // Tilt forward simulating rolling away
+                scale: 0.8,
+                // Purposely NOT fading opacity to 0 here per user request
+                duration: animationDuration,
+                ease: "power2.inOut",
+              });
+            }
+          });
+
+          // hold at end so the last card stays planted
+          tl.to({}, { duration: 0.5 });
+        }
+      },
+    );
+
+    return () => mm.revert();
   }, []);
 
   const prizes = [
@@ -107,7 +223,7 @@ const MissionRewards = () => {
     {
       imageSrc: FirstPrize,
       altText: "First Prize",
-      overlayContent: "25,0000",
+      overlayContent: "25,000",
       bgcolor: "#F27C06",
       assetColors: "#211E1B",
       position: "1",
@@ -131,57 +247,61 @@ const MissionRewards = () => {
   return (
     <div
       ref={sectionRef}
-      className="relative w-full min-h-screen overflow-hidden"
+      className="relative w-full max-w-[100vw] min-h-screen overflow-x-hidden select-none"
     >
-      <div ref={paddingRef} className="w-full h-full p-4 md:p-8">
-        <div
-          ref={contentRef}
-          className="relative w-full h-full bg-[#000000] rounded-4xl overflow-hidden"
-        >
-          <GalaxyModel />
-          <div className="relative flex flex-col items-center justify-center pointer-events-none z-10 py-12 min-h-screen">
-            <div className="flex flex-wrap text-5xl md:text-7xl gap-4 md:gap-10 justify-center w-full items-center px-4">
-              <div className="hidden xl:block">
-                <LeftBar width="300" />
-              </div>
-              <h1 className="text-center">
-                MISSION <span className="text-accent">REWARDS</span>
-              </h1>
-              <div className="hidden xl:block">
-                <RightBar width="300" />
-              </div>
+      <div
+        ref={contentRef}
+        className="relative w-full min-h-screen bg-[#000000] overflow-hidden"
+        style={{ transformOrigin: "center top", willChange: "transform" }}
+      >
+        <GalaxyModel />
+        <div className="relative flex flex-col items-center justify-start md:justify-center pointer-events-none z-10 py-16 sm:py-12 min-h-screen gap-12 sm:gap-6 md:gap-0">
+          <div
+            ref={titleRef}
+            className="flex flex-wrap text-5xl lg:text-7xl xl:text-8xl leading-none text-accent font-share-tech uppercase tracking-tighter drop-shadow-2xl text-center whitespace-nowrap gap-2 sm:gap-4 md:gap-10 justify-center w-full items-center px-4"
+          >
+            <div className="hidden xl:block">
+              <LeftBar width="300" />
             </div>
-            <div className="cards-container pointer-events-none flex w-full justify-center md:justify-evenly items-center flex-wrap gap-10 px-4">
-              {prizes.map((prize, index) => (
-                <div
-                  key={index}
-                  className={`pointer-events-auto ${prize.className}`}
-                  ref={(el) => {
-                    if (el) cardsRef.current[index] = el;
-                  }}
-                >
-                  <TiltedCard
-                    imageSrc={prize.imageSrc}
-                    altText={prize.altText}
-                    containerHeight="500px"
-                    containerWidth="300px"
-                    imageHeight="500px"
-                    imageWidth="300px"
-                    bgcolor={prize.bgcolor}
-                    rotateAmplitude={12}
-                    scaleOnHover={1.05}
-                    showMobileWarning={false}
-                    showTooltip
-                    displayOverlayContent
-                    overlayContent={prize.overlayContent}
-                    assetColors={prize.assetColors}
-                    position={prize.position}
-                    follower={prize.follower}
-                    textColor={prize.textColor}
-                  />
-                </div>
-              ))}
+            <h1 className="text-center mt-2 md:mt-0">
+              MISSION <span className="text-white">REWARDS</span>
+            </h1>
+            <div className="hidden xl:block">
+              <RightBar width="300" />
             </div>
+          </div>
+
+          <div className="cards-container pointer-events-none flex w-full relative md:static justify-center md:justify-evenly items-center flex-wrap gap-4 sm:gap-6 md:gap-10 px-2 sm:px-4 mt-8 sm:mt-0 flex-1 md:flex-none h-[65vh] md:h-auto">
+            {prizes.map((prize, index) => (
+              <div
+                key={index}
+                className={`pointer-events-auto absolute md:static md:w-auto w-[75%] max-w-[280px] transform-gpu ${prize.className}`}
+                style={{ willChange: "transform, opacity" }}
+                ref={(el) => {
+                  if (el) cardsRef.current[index] = el;
+                }}
+              >
+                <TiltedCard
+                  imageSrc={prize.imageSrc}
+                  altText={prize.altText}
+                  containerHeight="auto"
+                  containerWidth="100%"
+                  imageHeight="clamp(420px, 80vw, 500px)"
+                  imageWidth="100%"
+                  bgcolor={prize.bgcolor}
+                  rotateAmplitude={12}
+                  scaleOnHover={1.05}
+                  showMobileWarning={false}
+                  showTooltip
+                  displayOverlayContent
+                  overlayContent={prize.overlayContent}
+                  assetColors={prize.assetColors}
+                  position={prize.position}
+                  follower={prize.follower}
+                  textColor={prize.textColor}
+                />
+              </div>
+            ))}
           </div>
         </div>
       </div>

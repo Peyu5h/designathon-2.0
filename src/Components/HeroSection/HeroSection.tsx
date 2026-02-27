@@ -2,13 +2,13 @@ import { useCountdown } from "./hooks/useCountdown.js";
 import { useParallax } from "./hooks/useParallax.js";
 import { socialItems } from "./constants/socialsData.js";
 import { RetroGrid } from "../retro-grid";
-import NavigationMenu from "../sterling-gate-kinetic-navigation";
+import GdgIcon from "./components/GdgIcon.js";
 import CountUp from "../CountUp.jsx";
 import ShinyText from "../ShinyText.jsx";
 import DecryptedText from "../DecryptedText.jsx";
 import FloatingObject from "./Floating.js";
 import { AnimatedTooltip } from "../ui/animated-tooltip";
-import GdgIcon from "./components/GdgIcon.js";
+import { assets } from "@/lib/assets.js";
 import Timer from "./components/Timer.js";
 
 const HeroSection = () => {
@@ -46,16 +46,18 @@ const HeroSection = () => {
 
         <GdgIcon />
         {/* hamburger */}
-        <NavigationMenu />
+        {/* <NavigationMenu /> */}
 
         {/* gdg text below logo */}
         <div className="absolute top-16 md:top-18 left-1/2 -translate-x-1/2 z-15 flex flex-col items-center space-y-0.5">
           <h2 className="text-sm font-inter md:text-base lg:text-2xl font-semibold tracking-wide text-white leading-tight">
             Google Developer Groups
           </h2>
-          <p className=" font-inter text-[10px] md:text-xs lg:text-sm text-neutral-300  leading-tight">
-            <span className="text-accent font-medium">On Campus</span>
-            <span className="mx-1 text-neutral-500">·</span>
+          <p className="font-inter text-[10px] md:text-xs lg:text-sm text-neutral-300 leading-tight">
+            <span className="text-accent font-medium hidden md:inline">
+              On Campus
+            </span>
+            <span className="md:mx-1 text-neutral-500">·</span>
             <span>Atharva College of Engineering</span>
           </p>
           <p className="text-md md:text-xl text-neutral-300 tracking-widest uppercase pt-1">
@@ -66,7 +68,7 @@ const HeroSection = () => {
         {/* === COUNTDOWN TOP-LEFT === */}
         <Timer timeLeft={timeLeft} />
 
-        {/* === BACKGROUND 2.0 TEXT === */}
+        {/* background 2.0 text */}
         <div className="absolute inset-0 flex items-center justify-center z-1 pointer-events-none select-none overflow-hidden">
           <span
             className="font-bold text-[#5b3c24] opacity-100 leading-none tracking-wider"
@@ -76,9 +78,7 @@ const HeroSection = () => {
           </span>
         </div>
 
-        {/* === FLOATING 3D OBJECTS === */}
-
-        {/* topleft camera - large, partially behind countdown */}
+        {/* floating objects */}
         <FloatingObject
           src="/images/hero/topleft-camera-v1.png"
           alt="Camera tool"
@@ -87,49 +87,40 @@ const HeroSection = () => {
           parallaxFactor={0.6}
           mouseOffset={mouseOffset}
         />
-
         <FloatingObject
-          src="/images/hero/bolt.png"
+          src={assets.hero.bolt}
           alt="Bolt"
           wrapperClassName="z-8 top-1/2 -translate-y-20 left-[-2%] md:left-30 animate-float-1"
           innerClassName="w-5 h-5 md:w-12 md:h-12 rotate-[0deg]"
           parallaxFactor={0.9}
           mouseOffset={mouseOffset}
         />
-
-        {/* topright camera / tools - bigger */}
         <FloatingObject
-          src="/images/hero/topright-camera.png"
+          src={assets.hero.toprightCamera}
           alt="Tools"
-          wrapperClassName="z-5 top-[8%] right-[0%] md:right-[3%] lg:right-[0%] animate-float-2"
-          innerClassName="w-28 h-24 md:w-40 md:h-32 lg:w-108 lg:h-76 "
+          wrapperClassName="z-5 top-24 right-[-24px] md:top-[8%] md:right-[3%] lg:right-[0%] animate-float-2"
+          innerClassName="w-64 h-56 md:w-40 md:h-32 lg:w-108 lg:h-76"
           parallaxFactor={0.5}
           mouseOffset={mouseOffset}
         />
-
-        {/* laptop left side - bigger */}
         <FloatingObject
-          src="/images/hero/laptop.png"
+          src={assets.hero.laptop}
           alt="Laptop"
           wrapperClassName="z-5 bottom-[6%] left-[0%] md:left-[2%] lg:left-[5%] animate-float-3"
           innerClassName="w-36 h-28 md:w-48 md:h-36 lg:w-80  lg:h-80 rotate-[-8deg]"
           parallaxFactor={0.7}
           mouseOffset={mouseOffset}
         />
-
-        {/* bolt 1 - left of astronaut, upper area */}
         <FloatingObject
-          src="/images/hero/bolt.png"
+          src={assets.hero.bolt}
           alt="Bolt"
           wrapperClassName="z-5 top-[10%] left-[28%] md:left-[24%] animate-float-4"
           innerClassName="w-5 h-5 md:w-24 md:h-24 rotate-[280deg]"
           parallaxFactor={0.9}
           mouseOffset={mouseOffset}
         />
-
-        {/* bolt 2 - right side mid */}
         <FloatingObject
-          src="/images/hero/bolt.png"
+          src={assets.hero.bolt}
           alt="Bolt"
           wrapperClassName="z-5 top-[18%] right-[14%] md:right-[18%] animate-float-5"
           innerClassName="w-4 h-4 md:w-24 md:h-12 rotate-[140deg]"
@@ -141,17 +132,15 @@ const HeroSection = () => {
 
         {/* bolt 6 - right side lower */}
         <FloatingObject
-          src="/images/hero/bolt.png"
+          src={assets.hero.bolt}
           alt="Bolt"
           wrapperClassName="z-5 bottom-[40%] right-[12%] animate-float-5 [animation-delay:1.6s]"
           innerClassName="w-4 h-4 md:w-20 md:h-20 rotate-270"
           parallaxFactor={0.7}
           mouseOffset={mouseOffset}
         />
-
-        {/* bottomright camera / hammer tool - bigger */}
         <FloatingObject
-          src="/images/hero/bottomright-camera.png"
+          src={assets.hero.bottomrightCamera}
           alt="Tool"
           wrapperClassName="z-5 bottom-[12%] right-[16%] md:right-[16%] animate-float-4 [animation-delay:1.4s]"
           innerClassName="w-20 h-28 md:w-28 md:h-36 lg:w-50 lg:h-50 rotate-[140deg]"
@@ -159,8 +148,8 @@ const HeroSection = () => {
           mouseOffset={mouseOffset}
         />
 
-        {/* === ASTRONAUT (highest z among scene objects, centered) === */}
-        <div className="absolute z-7 pointer-events-none left-1/2 -translate-x-1/2 top-[8%] md:top-[20%]">
+        {/* astronaut */}
+        <div className="absolute z-7 pointer-events-none left-1/2 -translate-x-1/2 top-[32%] md:top-[20%] w-78 h-78 md:w-100 md:h-100 lg:w-128 lg:h-128">
           <div className="animate-float-3">
             <div
               className="will-change-transform backface-hidden"
@@ -169,7 +158,7 @@ const HeroSection = () => {
               }}
             >
               <img
-                src="/images/hero/astronaut.png"
+                src={assets.hero.astronaut}
                 alt="Astronaut floating in space"
                 className="w-72 h-72 md:w-100 md:h-100 lg:w-148 lg:h-148 object-contain select-none"
                 style={{
@@ -181,16 +170,14 @@ const HeroSection = () => {
           </div>
         </div>
 
-        {/* === MAIN TEXT CONTENT === */}
+        {/* main text content */}
         <div
           className="absolute z-12 text-center flex flex-col items-center w-full px-4"
           style={{ top: "52%", transform: "translateY(-15%)" }}
         >
-          {/* subtle radial gradient behind text for visibility */}
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[140%] h-[140%] -z-10 bg-[radial-gradient(closest-side,rgba(0,0,0,0.5)_0%,rgba(0,0,0,0)_100%)] blur-2xl pointer-events-none" />
 
-          {/* designathon with shiny animation */}
-          <div className=" rounded-xl p-2 px-4 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+          <div className="rounded-xl p-2 px-4 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
             <ShinyText
               text="D E S I G N A T H O N"
               speed={2}
@@ -201,37 +188,22 @@ const HeroSection = () => {
             />
           </div>
 
-          <div className="w-full flex justify-center ">
-            {/*<SplitText
-              text=""
-              className="spacebound-title"
-              delay={80}
-              duration={1}
-              ease="power3.out"
-              splitType="chars"
-              from={{ opacity: 0, y: 60, rotateX: -40 }}
-              to={{ opacity: 1, y: 0, rotateX: 0 }}
-              threshold={0.1}
-              rootMargin="-50px"
-              textAlign="center"
-              tag="h1"
-            />*/}
-            <h1 className="text-4xl spacebound-title md:text-2xl lg:text-7xl font-bold tracking-tighter text-white leading-tight ">
+          <div className="w-full flex justify-center">
+            <h1 className="text-4xl spacebound-title md:text-2xl lg:text-7xl font-bold tracking-tighter text-white leading-tight">
               SPACEBOUND
             </h1>
           </div>
 
-          {/* tagline */}
           <div className="relative pt-4 w-full max-w-xl mx-auto drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
             <div className="absolute inset-x-0 h-px bg-linear-to-r from-transparent via-accent to-transparent opacity-30 blur-sm" />
-            <div className="text-xs md:text-sm lg:text-xl font-medium tracking-[0.2em] text-white mt-2 lowercase text-center ">
+            <div className="text-xs md:text-sm lg:text-xl font-medium tracking-[0.2em] text-white mt-2 lowercase text-center">
               <DecryptedText
                 text="Design beyond the known universe"
                 speed={70}
                 maxIterations={20}
                 sequential={true}
                 revealDirection="center"
-                className="text-neutral-100 uppercase font-black "
+                className="text-neutral-100 uppercase font-black"
                 encryptedClassName="text-neutral-300 uppercase font-black"
                 animateOn="view"
               />
@@ -281,16 +253,10 @@ const HeroSection = () => {
                   "radial-gradient(circle at 0 0, transparent 2rem, black 2rem)",
               }}
             />
-            {/* inverted corner left */}
-            <div
-              className="absolute bottom-0 -left-8 w-8 h-8 bg-white translate-x-px"
-              style={{
-                maskImage:
-                  "radial-gradient(circle at 0 0, transparent 2rem, black 2rem)",
-                WebkitMaskImage:
-                  "radial-gradient(circle at 0 0, transparent 2rem, black 2rem)",
-              }}
-            />
+            {/* <InvertedCornerSVG
+              className="absolute bottom-[-1px] -left-[31.5px] w-8 h-8 text-white"
+              path="M32 32V0C32 17.67 17.67 32 0 32z"
+            /> */}
 
             <div className="pl-6  pr-4 md:pr-6 py-3 md:py-4 flex flex-col items-center min-w-28 md:min-w-36">
               <div className="flex items-baseline leading-none">
@@ -301,7 +267,7 @@ const HeroSection = () => {
                   k
                 </span>
               </div>
-              <span className="text-[8px] md:text-[13px] uppercase tracking-[0.2em] text-neutral-500 font-bold ">
+              <span className="text-[10px] md:text-[13px] uppercase tracking-[0.2em] text-neutral-500 font-bold">
                 prize pool
               </span>
             </div>

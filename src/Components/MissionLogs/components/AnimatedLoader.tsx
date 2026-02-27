@@ -8,7 +8,6 @@ interface Props {
   color: string;
 }
 
-// oscillating random loader bar
 const AnimatedLoader = ({ min, max, interval, color }: Props) => {
   const [width, setWidth] = useState(min + Math.random() * (max - min));
 
