@@ -61,9 +61,10 @@ const socialItems = [
   },
 ];
 
-const InvertedCorner = ({ className }: { className: string }) => (
+// inverted corner for social icons container
+export const InvertedCorner = ({ className }: { className: string }) => (
   <svg
-    className={`absolute w-8 h-8 text-white ${className}`}
+    className={`absolute w-8 h-8 z-10 text-white ${className}`}
     fill="currentColor"
     stroke="currentColor"
     strokeWidth="1.5"
