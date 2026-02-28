@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { CustomEase } from "gsap/CustomEase";
 import { useLenis } from "@/lib/Lenis";
+import { useScrollEngine } from "@/lib/scroll-engine-context";
 import SocialIcons from "./HeroSection/SocialIcons";
 
 // register gsap plugins
@@ -12,6 +13,7 @@ if (typeof window !== "undefined") {
 export default function NavigationMenu() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const scrollEngine = useScrollEngine();
   const tlRef = useRef<gsap.core.Timeline | null>(null);
   const lenis = useLenis();
 
@@ -240,14 +242,19 @@ export default function NavigationMenu() {
   const toggleMenu = () => setIsMenuOpen((prev) => !prev);
   const closeMenu = () => setIsMenuOpen(false);
 
-  // smooth scroll to section
+  // smooth scroll to section via engine (bypasses scroll guards)
   const handleNavClick = (id: string, e: React.MouseEvent) => {
     e.preventDefault();
     setIsMenuOpen(false);
 
+    // strip leading # to get section id
+    const sectionId = id.startsWith("#") ? id.slice(1) : id;
+
     // delay scroll until close animation finishes
     setTimeout(() => {
-      if (lenis) {
+      if (scrollEngine) {
+        scrollEngine.navigateToSection(sectionId, 1.5);
+      } else if (lenis) {
         lenis.scrollTo(id, { duration: 1.5, lock: true });
       } else {
         document.querySelector(id)?.scrollIntoView({ behavior: "smooth" });
