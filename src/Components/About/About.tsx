@@ -1,89 +1,160 @@
-import { useRef } from "react";
+import { useRef, useEffect, useState } from "react";
 import { useGSAP } from "@gsap/react";
 import { gsap, ScrollTrigger } from "@/lib/gsap";
 import { links } from "@/lib/links";
+import { aboutContent } from "@/lib/content";
 import Carousel from "./Carousel";
 
 gsap.registerPlugin(ScrollTrigger);
 
 const About = () => {
   const container = useRef<HTMLDivElement>(null);
+  const [isVisible, setIsVisible] = useState(false);
+  const hasAnimated = useRef(false);
+
+  // intersection observer as fallback for scroll-trigger
+  useEffect(() => {
+    if (!container.current) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !hasAnimated.current) {
+          setIsVisible(true);
+        }
+      },
+      { threshold: 0.15 },
+    );
+
+    observer.observe(container.current);
+    return () => observer.disconnect();
+  }, []);
 
   useGSAP(
     () => {
       const chars = container.current?.querySelectorAll(".about-heading-char");
       const paraLines = container.current?.querySelectorAll(".about-para-line");
+      const arrow = container.current?.querySelector(".about-arrow");
+      const image = container.current?.querySelector(".about-image-animation");
+      const button = container.current?.querySelector(
+        ".about-button-animation",
+      );
 
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: container.current,
-          start: "top 35%",
-          end: "bottom 100%",
-          scrub: 1,
-        },
-        defaults: { ease: "power3.out" },
-      });
+      const allTargets = [
+        ...(chars ? Array.from(chars) : []),
+        ...(paraLines ? Array.from(paraLines) : []),
+        ...(arrow ? [arrow] : []),
+        ...(image ? [image] : []),
+        ...(button ? [button] : []),
+      ];
+
+      // elements start visible via css, gsap hides them for animation
+      gsap.set(allTargets, { opacity: 0 });
 
       if (chars && chars.length > 0) {
-        tl.from(chars, {
-          y: 80,
-          stagger: 0.15,
-          duration: 3,
-        });
+        gsap.set(chars, { y: 40 });
       }
-
       if (paraLines && paraLines.length > 0) {
-        tl.from(
-          paraLines,
-          {
-            y: 50,
-            autoAlpha: 0,
-            filter: "blur(8px)",
-            stagger: 0.2,
-            duration: 1.2,
-            ease: "power3.out",
-          },
-          "-=1.5",
-        );
+        gsap.set(paraLines, { y: 20 });
       }
+      if (arrow) gsap.set(arrow, { x: -20 });
+      if (image) gsap.set(image, { x: 10 });
+      if (button) gsap.set(button, { y: 20 });
 
-      tl.from(
-        ".about-arrow",
-        {
-          x: -40,
-          autoAlpha: 0,
-          duration: 0.6,
-          ease: "bounce.out",
-        },
-        "-=0.8",
-      )
-        .from(
-          ".about-image-animation",
-          {
-            x: 10,
-            autoAlpha: 0,
-            duration: 5,
-          },
-          "-=0.8",
-        )
-        .from(
-          ".about-button-animation",
-          {
-            y: 40,
-            autoAlpha: 0,
-            duration: 1,
-          },
-          "-=0.6",
-        );
+      // plays the reveal animation
+      const playReveal = () => {
+        if (hasAnimated.current) return;
+        hasAnimated.current = true;
+
+        const tl = gsap.timeline({
+          defaults: { ease: "power3.out" },
+        });
+
+        if (chars && chars.length > 0) {
+          tl.to(chars, {
+            y: 0,
+            opacity: 1,
+            stagger: 0.04,
+            duration: 0.8,
+          });
+        }
+
+        if (paraLines && paraLines.length > 0) {
+          tl.to(
+            paraLines,
+            {
+              y: 0,
+              opacity: 1,
+              stagger: 0.08,
+              duration: 0.6,
+            },
+            "-=0.4",
+          );
+        }
+
+        if (arrow) {
+          tl.to(
+            arrow,
+            { x: 0, opacity: 1, duration: 0.4, ease: "bounce.out" },
+            "-=0.3",
+          );
+        }
+
+        if (image) {
+          tl.to(image, { x: 0, opacity: 1, duration: 0.8 }, "-=0.3");
+        }
+
+        if (button) {
+          tl.to(button, { y: 0, opacity: 1, duration: 0.5 }, "-=0.4");
+        }
+      };
+
+      // primary trigger via scroll
+      ScrollTrigger.create({
+        trigger: container.current,
+        start: "top 80%",
+        once: true,
+        onEnter: playReveal,
+      });
+
+      // secondary trigger on scroll-back
+      ScrollTrigger.create({
+        trigger: container.current,
+        start: "bottom bottom",
+        once: true,
+        onEnterBack: playReveal,
+      });
     },
     { scope: container },
   );
 
-  const headingText = "ABOUT";
-  const headingAccent = "GDGC ACE";
+  // fallback: if intersection observer detected visibility and gsap hasn't fired
+  useEffect(() => {
+    if (!isVisible || hasAnimated.current) return;
 
-  const paraText =
-    "GDGC ACE empowers tech enthusiasts. We foster a vibrant community through workshops, hackathons, and industry connections. Our members explore cutting-edge technologies, build strong portfolios, and gain the skills to succeed in the evolving tech world.";
+    // give scrolltrigger a moment to catch up
+    const fallbackTimer = setTimeout(() => {
+      if (hasAnimated.current) return;
+      hasAnimated.current = true;
+
+      const el = container.current;
+      if (!el) return;
+
+      const targets = el.querySelectorAll(
+        ".about-heading-char, .about-para-line, .about-arrow, .about-image-animation, .about-button-animation",
+      );
+
+      gsap.to(targets, {
+        opacity: 1,
+        x: 0,
+        y: 0,
+        duration: 0.6,
+        stagger: 0.03,
+        ease: "power2.out",
+      });
+    }, 500);
+
+    return () => clearTimeout(fallbackTimer);
+  }, [isVisible]);
 
   // l-shape clip path used only on desktop
   const shapePath = [
@@ -106,7 +177,7 @@ const About = () => {
   return (
     <div
       ref={container}
-      className="bg-[#211E1B] min-h-auto lg:h-dvh lg:max-h-screen flex flex-col overflow-x-hidden text-white"
+      className="bg-[#211E1B] min-h-[90vh] lg:h-dvh lg:max-h-screen flex flex-col overflow-x-hidden text-white"
     >
       <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 md:px-12 flex-1 flex flex-col lg:flex-row items-center gap-4 sm:gap-6 lg:gap-12 py-8 sm:py-10 lg:py-0">
         <div className="flex-1 flex flex-col justify-center w-full">
@@ -114,7 +185,7 @@ const About = () => {
 
           <h2 className="text-2xl sm:text-3xl md:text-5xl lg:text-7xl text-white mt-1 sm:mt-2 leading-tight tracking-widest overflow-hidden">
             <span className="block overflow-hidden">
-              {headingText.split("").map((char, i) => (
+              {aboutContent.headingLine1.split("").map((char, i) => (
                 <span
                   key={`l1-${i}`}
                   className="about-heading-char inline-block font-bold"
@@ -124,7 +195,7 @@ const About = () => {
               ))}
             </span>
             <span className="block overflow-hidden">
-              {headingAccent.split("").map((char, i) => (
+              {aboutContent.headingLine2.split("").map((char, i) => (
                 <span
                   key={`l2-${i}`}
                   className="about-heading-char inline-block font-bold text-primary"
@@ -143,13 +214,13 @@ const About = () => {
 
           <div className="mt-2 sm:mt-4 lg:mt-7 mb-4 sm:mb-6 lg:mb-10 lg:max-w-2xl">
             <p className="about-para-line text-xs sm:text-sm md:text-lg lg:text-xl xl:text-2xl text-white leading-relaxed sm:leading-relaxed lg:leading-11 tracking-wide lg:tracking-wider">
-              {paraText}
+              {aboutContent.paragraph}
             </p>
           </div>
 
           <a href={links.gdgcWebsite} target="_blank" rel="noopener noreferrer">
             <button className="about-button-animation bg-[#F27C06] active:scale-95 px-4 sm:px-6 py-2.5 sm:py-3 lg:py-4 rounded-xl text-sm sm:text-base lg:text-2xl text-center text-white tracking-wider font-semibold shadow-hover-btn transition-all duration-150 w-full sm:w-auto">
-              VISIT GDGC OFFICIAL WEBSITE
+              {aboutContent.ctaText}
             </button>
           </a>
         </div>

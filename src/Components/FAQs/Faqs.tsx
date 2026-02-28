@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import OptimizedImage from "@/Components/OptimizedImage";
 import { assets } from "@/lib/assets";
 import { links } from "@/lib/links";
+import { faqContent } from "@/lib/content";
 import { FlippingCard } from "../ui/flipping-card";
 import { InvertedCorner } from "./InvertedCorner";
 
@@ -35,6 +36,13 @@ const CardBack = ({ text }: { text: string }) => (
   </div>
 );
 
+const FaqTitle = ({ className = "" }: { className?: string }) => (
+  <h1 className={className}>
+    <span className="text-accent">FAQ</span>
+    <span className="text-white lowercase">s</span>
+  </h1>
+);
+
 const Faqs = () => {
   const [isJupiterHovered, setIsJupiterHovered] = useState(false);
 
@@ -45,12 +53,9 @@ const Faqs = () => {
     >
       {/* mobile title */}
       <div className="z-30 lg:hidden pt-4 pb-0 flex w-full mx-auto items-center justify-center pointer-events-none shrink-0">
-        <h1 className="absolute top-4 lg:top-8 left-1/2 -translate-x-1/2 z-30 text-4xl sm:text-5xl lg:text-7xl xl:text-8xl leading-none text-accent font-share-tech uppercase tracking-tighter drop-shadow-2xl text-center whitespace-nowrap">
-          FAQ<span className="text-white lowercase">s</span>
-        </h1>
+        <FaqTitle className="absolute top-4 lg:top-8 left-1/2 -translate-x-1/2 z-30 text-4xl sm:text-5xl leading-none font-share-tech uppercase tracking-tighter drop-shadow-2xl text-center whitespace-nowrap" />
       </div>
-
-      <div className="absolute inset-0 top-0 w-full h-full opacity-90 pointer-events-none">
+      <div className="md:hidden absolute inset-0 top-0 w-full h-full opacity-90 pointer-events-none">
         <OptimizedImage
           src={assets.faqs.gif}
           alt="FAQ Animate"
@@ -60,11 +65,11 @@ const Faqs = () => {
 
       {/* card layout area */}
       <div className="relative w-full flex-1 lg:h-full lg:w-[60%] flex items-center justify-center lg:justify-start lg:pl-10 xl:pl-20 pointer-events-none pb-0 lg:pb-0 overflow-hidden">
-        <div className="relative w-[700px] h-[920px] shrink-0 scale-[0.50] sm:scale-[0.58] md:scale-[0.85] lg:scale-[0.7] xl:scale-[0.85] 2xl:scale-[0.95] origin-center lg:origin-left -mt-[24vh] sm:-mt-[26vh] lg:mt-0 lg:ml-0 translate-x-[-5%] sm:-translate-x-[5%] lg:translate-x-0 pointer-events-auto">
+        <div className="relative w-[700px] h-[1060px] shrink-0 scale-[0.44] sm:scale-[0.50] md:scale-[0.85] lg:scale-[0.7] xl:scale-[0.85] 2xl:scale-[0.95] origin-center lg:origin-left -mt-[20vh] sm:-mt-[22vh] lg:mt-0 lg:ml-0 translate-x-[-5%] sm:-translate-x-[5%] lg:translate-x-0 pointer-events-auto">
           {/* origin block */}
           <div className="absolute top-[0px] left-28 w-40 h-44 bg-primary rounded-tl-4xl rounded-tr-4xl rounded-bl-4xl z-10" />
 
-          {/* card 1 */}
+          {/* card 1 — WHO CAN PARTICIPATE */}
           <div className="absolute top-44 left-72 w-52 h-52 sm:w-52 sm:h-52 z-20">
             <InvertedCorner
               orientation="top-right"
@@ -80,24 +85,18 @@ const Faqs = () => {
             <FlippingCard
               variant="primary"
               className="!rounded-tl-none shadow-none"
-              frontContent={<CardFront text="What is the team size?" />}
-              backContent={
-                <CardBack text="1 to 4 members. Solo participants welcome!" />
-              }
+              frontContent={<CardFront text={faqContent[0].question} />}
+              backContent={<CardBack text={faqContent[0].answer} />}
             />
           </div>
 
-          {/* card 2 */}
+          {/* card 2 — WHAT TOOLS CAN WE USE */}
           <div className="absolute top-48 left-2 w-[260px] h-[340px] sm:w-[260px] sm:h-[360px] z-20">
             <FlippingCard
               variant="white"
               className="!rounded-bl-none shadow-none"
-              frontContent={
-                <CardFront text="Do I have to bring a laptop for offline round?" />
-              }
-              backContent={
-                <CardBack text="Yes, bringing your own laptop is mandatory." />
-              }
+              frontContent={<CardFront text={faqContent[1].question} />}
+              backContent={<CardBack text={faqContent[1].answer} />}
             />
           </div>
 
@@ -115,86 +114,78 @@ const Faqs = () => {
             className="top-[550px] -left-[5px] z-20"
           />
 
-          {/* card 3 & card 4 group */}
-          <div>
-            <div className="absolute top-[370px] left-[490px] w-52 h-52 sm:w-52 sm:h-52 z-20">
-              <FlippingCard
-                variant="white"
-                className="!rounded-bl-none shadow-none"
-                frontContent={<CardFront text="What is Hackathon?" />}
-                backContent={
-                  <CardBack text="A time-framed event to collaborate and solve design challenges." />
-                }
-              />
-            </div>
-
-            <div className="absolute top-[560px] left-[280px] w-52 h-52 sm:w-52 sm:h-52 z-20">
-              <FlippingCard
-                variant="white"
-                className="!rounded-tr-none shadow-none"
-                frontContent={<CardFront text="Is the prize money real?" />}
-                backContent={
-                  <CardBack text="Absolutely! Real cash prizes for the winning teams." />
-                }
-              />
-            </div>
-            <InvertedCorner
-              orientation="bottom-right"
-              colorClassName="text-white"
-              className="top-[522px] left-[452px] z-20"
-            />
-
-            <InvertedCorner
-              orientation="top-left"
-              colorClassName="text-white"
-              className="top-[552px] left-[476px] z-20"
+          {/* card 3 — HOW WILL JUDGING BE DONE (desktop + mobile) */}
+          <div className="absolute top-[420px] left-[440px] w-52 h-52 sm:w-56 sm:h-56 z-20">
+            <FlippingCard
+              variant="white"
+              className="!rounded-bl-none shadow-none"
+              frontContent={<CardFront text={faqContent[2].question} />}
+              backContent={<CardBack text={faqContent[2].answer} />}
             />
           </div>
 
-          {/* extra faq cards for mobile */}
+          {/* card 4 — HOW MANY MEMBERS (desktop + mobile) */}
+          <div className="absolute top-[640px] left-[240px] w-52 h-52 sm:w-56 sm:h-56 z-20">
+            <FlippingCard
+              variant="white"
+              className="!rounded-tr-none shadow-none"
+              frontContent={<CardFront text={faqContent[3].question} />}
+              backContent={<CardBack text={faqContent[3].answer} />}
+            />
+          </div>
+
+          <InvertedCorner
+            orientation="bottom-right"
+            colorClassName="text-white"
+            className="top-[600px] left-[402px] z-20"
+          />
+
+          <InvertedCorner
+            orientation="top-left"
+            colorClassName="text-white"
+            className="top-[632px] left-[430px] z-20"
+          />
+
+          {/* extra mobile-only cards pushed further down for spacing */}
           <div className="md:hidden">
-            <div className="absolute top-[600px] left-[460px] w-48 h-48 sm:w-52 sm:h-52 z-20">
+            <div className="absolute top-[700px] left-[460px] w-48 h-48 sm:w-52 sm:h-52 z-20">
               <FlippingCard
                 variant="white"
                 className="!rounded-bl-none shadow-none"
-                frontContent={<CardFront text="What is ....?" />}
-                backContent={
-                  <CardBack text="A time-framed event to collaborate and solve design challenges." />
-                }
+                frontContent={<CardFront text={faqContent[2].question} />}
+                backContent={<CardBack text={faqContent[2].answer} />}
               />
             </div>
 
-            <div className="absolute top-[760px] left-[280px] w-48 h-48 sm:w-52 sm:h-52 z-20">
+            <div className="absolute top-[870px] left-[260px] w-48 h-48 sm:w-52 sm:h-52 z-20">
               <FlippingCard
                 variant="white"
                 className="!rounded-tr-none shadow-none"
-                frontContent={<CardFront text="Is the prize money real?" />}
-                backContent={
-                  <CardBack text="Absolutely! Real cash prizes for the winning teams." />
-                }
+                frontContent={<CardFront text={faqContent[3].question} />}
+                backContent={<CardBack text={faqContent[3].answer} />}
               />
             </div>
             <InvertedCorner
               orientation="bottom-right"
               colorClassName="text-white"
-              className="top-[722px] left-[422px] z-20"
+              className="top-[830px] left-[422px] z-20"
             />
             <InvertedCorner
               orientation="top-left"
               colorClassName="text-white"
-              className="top-[752px] left-[446px] z-20"
+              className="top-[862px] left-[450px] z-20"
             />
           </div>
 
-          {/* jupiter discord link — desktop only (inside card layout) */}
+          {/* jupiter discord link — desktop only, fits between card 3 and card 4 */}
           <div
-            className="absolute hidden md:block md:top-160 md:left-20 w-[160px] h-[160px] z-20 cursor-pointer group"
+            className="absolute hidden md:block md:top-[720px] md:left-20 w-[140px] h-[140px] z-20 cursor-pointer group"
             onMouseEnter={() => setIsJupiterHovered(true)}
             onMouseLeave={() => setIsJupiterHovered(false)}
             onClick={() => window.open(links.discord, "_blank")}
           >
             <motion.div
-              className="absolute inset-[-42px] pointer-events-none"
+              className="absolute inset-[-30px] pointer-events-none"
               animate={{ rotate: 360 }}
               transition={{
                 duration: isJupiterHovered ? 4 : 20,
@@ -231,11 +222,11 @@ const Faqs = () => {
               <img
                 src={assets.faqs.jupiter}
                 alt="Jupiter"
-                className="w-52 h-52 max-w-none object-contain transition-transform duration-500 group-hover:scale-[1.05]"
+                className="w-44 h-44 max-w-none object-contain transition-transform duration-500 group-hover:scale-[1.05]"
               />
 
               <div className="absolute inset-0 flex items-center justify-center -translate-y-[2px]">
-                <span className="text-white font-bold text-[16px] text-center leading-[1.1] tracking-widest uppercase filter drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] transition-transform duration-500 group-hover:scale-105">
+                <span className="text-white font-bold text-[14px] text-center leading-[1.1] tracking-widest uppercase filter drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] transition-transform duration-500 group-hover:scale-105">
                   Got More
                   <br />
                   Queries?
@@ -306,9 +297,7 @@ const Faqs = () => {
 
       {/* desktop right panel */}
       <div className="hidden lg:flex relative right-0 w-[40%] h-full flex-col items-center justify-center px-6 lg:p-4 z-20 pointer-events-none">
-        <h1 className="text-white text-[7rem] font-sans font-bold whitespace-nowrap tracking-tight leading-none drop-shadow-[0_4px_10px_rgba(0,0,0,0.5)] z-20 lg:mb-4 lg:ml-20">
-          FAQs
-        </h1>
+        <FaqTitle className="text-[7rem] font-sans font-bold whitespace-nowrap tracking-tight leading-none drop-shadow-[0_4px_10px_rgba(0,0,0,0.5)] z-20 lg:mb-4 lg:ml-20" />
         <div className="w-[600px] h-[600px] opacity-90 lg:mt-[-50px]">
           <OptimizedImage
             src={assets.faqs.gif}

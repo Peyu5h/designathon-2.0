@@ -1,5 +1,4 @@
 import { RetroGrid } from "../retro-grid";
-import NavigationMenu from "../navigationMenu";
 import CountUp from "../CountUp";
 import ShinyText from "../ShinyText";
 import DecryptedText from "../DecryptedText";
@@ -54,7 +53,7 @@ const HeroSection = () => {
 
         {/* gdgc logo */}
         <GdgIcon />
-        <div className="absolute md:-top-2.5 -top-1 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center">
+        <div className="absolute md:-top-2.5 -top-0.5  left-1/2 -translate-x-1/2 z-20 flex flex-col items-center">
           <img
             src={assets.hero.gdgLogo}
             alt="GDG Logo"
@@ -63,8 +62,6 @@ const HeroSection = () => {
             draggable={false}
           />
         </div>
-
-        <NavigationMenu />
 
         {/* gdg text below logo */}
         <div className="absolute top-16 md:top-18 left-1/2 -translate-x-1/2 z-15 flex flex-col items-center space-y-0.5">

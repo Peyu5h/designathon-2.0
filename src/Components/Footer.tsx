@@ -38,7 +38,7 @@ const Footer = memo(function Footer() {
                 <h3 className="text-foreground text-lg uppercase">
                   Google Developer Groups
                 </h3>
-                <p className="text-muted-foreground font-inter text-[12px] tracking-wider">
+                <p className="text-muted-foreground font-inter text-[10px] md:text-[12px] tracking-wider">
                   On Campus • Atharva College of Engineering
                 </p>
               </div>

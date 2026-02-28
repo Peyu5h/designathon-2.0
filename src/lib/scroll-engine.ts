@@ -2,6 +2,12 @@ import type Lenis from "lenis";
 
 const isMobileViewport = () => window.innerWidth < 768;
 
+// on mobile, about acts as snap (no free-scroll needed, single viewport)
+const getEffectiveType = (entry: FlowEntry): SectionType => {
+  if (isMobileViewport() && entry.id === "about") return "snap";
+  return entry.type;
+};
+
 // snap: one gesture = full viewport jump, block all native/lenis scroll
 // free: lenis/gsap-driven scroll, only intercept at boundaries
 // pass: completely natural scroll, never intercept
@@ -108,12 +114,11 @@ export const locateCurrentEntry = (
   for (let i = 0; i < PAGE_FLOW.length; i++) {
     const entry = PAGE_FLOW[i];
     const range = getSectionRange(entry.id);
+    const effectiveType = getEffectiveType(entry);
 
-    if (entry.type === "free") {
+    if (effectiveType === "free") {
       let bottomTol = tolerance;
-      if (entry.id === "about") {
-        bottomTol = tolerance + vh * 1.2;
-      } else if (!hasPinSpacer(entry.id)) {
+      if (!hasPinSpacer(entry.id)) {
         bottomTol = tolerance + vh * 0.5;
       }
       if (
@@ -122,7 +127,7 @@ export const locateCurrentEntry = (
       ) {
         return { entry, index: i };
       }
-    } else if (entry.type === "snap") {
+    } else if (effectiveType === "snap") {
       const target = getSnapTarget(entry.id);
       if (Math.abs(scrollY - target) < vh * 0.5) {
         return { entry, index: i };
@@ -377,15 +382,17 @@ export class ScrollEngine {
     if (!loc) return false;
 
     const { entry, index } = loc;
+    const effectiveType = getEffectiveType(entry);
 
-    if (entry.type === "pass") return false;
+    if (effectiveType === "pass") return false;
 
-    if (entry.type === "free") {
+    if (effectiveType === "free") {
       if (direction === "down" && isAtFreeZoneBottom(entry.id)) {
         const nextIdx = index + 1;
         if (nextIdx >= PAGE_FLOW.length) return false;
         const next = PAGE_FLOW[nextIdx];
-        if (next.type === "free" || next.type === "pass") {
+        const nextEffective = getEffectiveType(next);
+        if (nextEffective === "free" || nextEffective === "pass") {
           return false;
         }
         this.snapTo(next.id);
@@ -396,7 +403,8 @@ export class ScrollEngine {
         const prevIdx = index - 1;
         if (prevIdx < 0) return false;
         const prev = PAGE_FLOW[prevIdx];
-        if (prev.type === "free" || prev.type === "pass") {
+        const prevEffective = getEffectiveType(prev);
+        if (prevEffective === "free" || prevEffective === "pass") {
           return false;
         }
         this.snapTo(prev.id);
@@ -410,11 +418,15 @@ export class ScrollEngine {
       const nextIdx = index + 1;
       if (nextIdx >= PAGE_FLOW.length) return false;
       const next = PAGE_FLOW[nextIdx];
+      const nextEffective = getEffectiveType(next);
 
-      if (next.type === "free") {
+      if (nextEffective === "free") {
         this.scrollToPosition(getSnapTarget(next.id));
-      } else if (next.type === "snap") {
+      } else if (nextEffective === "snap") {
         this.snapTo(next.id);
+      } else if (nextEffective === "pass") {
+        // allow navigating into pass sections (ribbon/footer)
+        this.scrollToPosition(getSnapTarget(next.id));
       } else {
         return false;
       }
@@ -425,10 +437,11 @@ export class ScrollEngine {
       const prevIdx = index - 1;
       if (prevIdx < 0) return false;
       const prev = PAGE_FLOW[prevIdx];
+      const prevEffective = getEffectiveType(prev);
 
-      if (prev.type === "free") {
+      if (prevEffective === "free") {
         this.scrollToPosition(getFreeZoneExit(prev.id));
-      } else if (prev.type === "snap") {
+      } else if (prevEffective === "snap") {
         this.snapTo(prev.id);
       } else {
         return false;
@@ -440,7 +453,7 @@ export class ScrollEngine {
   private getCurrentSectionType(): SectionType {
     const loc = locateCurrentEntry(window.scrollY);
     if (!loc) return "snap";
-    return loc.entry.type;
+    return getEffectiveType(loc.entry);
   }
 
   private checkFooterVisibility(): void {
@@ -515,20 +528,9 @@ export class ScrollEngine {
     if (currentId !== prevEntryId && prevEntryId !== "") {
       const currentEntry = loc.entry;
 
-      // mobile: scroll-up from footer area → snap to faqs
-      if (
-        isMobileViewport() &&
-        delta < 0 &&
-        currentEntry.id === "about" &&
-        (prevEntryId === "ribbon-section" || prevEntryId === "about")
-      ) {
-        this.killLenisVelocity();
-        this.lenis.start();
-        this.snapTo("faqs", 0.8);
-        return;
-      }
+      const currentEffective = getEffectiveType(currentEntry);
 
-      if (currentEntry.type === "free") {
+      if (currentEffective === "free") {
         const prevIdx = PAGE_FLOW.findIndex((e) => e.id === prevEntryId);
         const prevEntry = prevIdx >= 0 ? PAGE_FLOW[prevIdx] : null;
         if (prevEntry && prevEntry.type === "free") {
@@ -536,7 +538,7 @@ export class ScrollEngine {
         }
       }
 
-      if (currentEntry.type === "pass") {
+      if (currentEffective === "pass") {
         const prevIdx = PAGE_FLOW.findIndex((e) => e.id === prevEntryId);
         const prevEntry = prevIdx >= 0 ? PAGE_FLOW[prevIdx] : null;
         if (
@@ -547,7 +549,7 @@ export class ScrollEngine {
         }
       }
 
-      if (currentEntry.type === "snap") {
+      if (currentEffective === "snap") {
         const prevIdx = PAGE_FLOW.findIndex((e) => e.id === prevEntryId);
         const prevEntry = prevIdx >= 0 ? PAGE_FLOW[prevIdx] : null;
 
@@ -559,7 +561,7 @@ export class ScrollEngine {
         }
       }
 
-      if (currentEntry.type === "free" || currentEntry.type === "pass") {
+      if (currentEffective === "free" || currentEffective === "pass") {
         const prevIdx = PAGE_FLOW.findIndex((e) => e.id === prevEntryId);
         const currIdx = loc.index;
 
@@ -601,16 +603,16 @@ export class ScrollEngine {
 
     const type = this.getCurrentSectionType();
 
-    // mobile: scroll-up from ribbon → snap to faqs
     if (type === "pass") {
+      // mobile: allow scrolling up from ribbon back to about
       if (isMobileViewport() && e.deltaY < 0) {
         const loc = locateCurrentEntry(window.scrollY);
-        if (loc && loc.entry.id === "ribbon-section") {
+        if (loc && loc.index > 0) {
           e.preventDefault();
+          const prev = PAGE_FLOW[loc.index - 1];
           this.killLenisVelocity();
           this.lenis.start();
-          this.snapTo("faqs", 0.8);
-          return;
+          this.snapTo(prev.id, 0.8);
         }
       }
       return;
@@ -622,19 +624,15 @@ export class ScrollEngine {
 
       const dir: "down" | "up" = e.deltaY > 0 ? "down" : "up";
 
-      // mobile: scroll-up from about → snap to faqs
-      if (isMobileViewport() && dir === "up" && loc.entry.id === "about") {
-        e.preventDefault();
-        this.killLenisVelocity();
-        this.lenis.start();
-        this.snapTo("faqs", 0.8);
-        return;
-      }
-
       if (dir === "down" && isAtFreeZoneBottom(loc.entry.id)) {
         const nextIdx = loc.index + 1;
         const next = nextIdx < PAGE_FLOW.length ? PAGE_FLOW[nextIdx] : null;
-        if (next && (next.type === "pass" || next.type === "free")) return;
+        if (
+          next &&
+          (getEffectiveType(next) === "pass" ||
+            getEffectiveType(next) === "free")
+        )
+          return;
 
         const handled = this.navigateFlow(dir);
         if (handled) {
@@ -646,7 +644,12 @@ export class ScrollEngine {
       if (dir === "up" && isAtFreeZoneTop(loc.entry.id)) {
         const prevIdx = loc.index - 1;
         const prev = prevIdx >= 0 ? PAGE_FLOW[prevIdx] : null;
-        if (prev && (prev.type === "pass" || prev.type === "free")) return;
+        if (
+          prev &&
+          (getEffectiveType(prev) === "pass" ||
+            getEffectiveType(prev) === "free")
+        )
+          return;
 
         const handled = this.navigateFlow(dir);
         if (handled) {
@@ -726,7 +729,11 @@ export class ScrollEngine {
     if (dir === "down" && isAtFreeZoneBottom(loc.entry.id)) {
       const nextIdx = loc.index + 1;
       const next = nextIdx < PAGE_FLOW.length ? PAGE_FLOW[nextIdx] : null;
-      if (next && (next.type === "pass" || next.type === "free")) return;
+      if (
+        next &&
+        (getEffectiveType(next) === "pass" || getEffectiveType(next) === "free")
+      )
+        return;
       e.preventDefault();
       this.killLenisVelocity();
       return;
@@ -734,7 +741,11 @@ export class ScrollEngine {
     if (dir === "up" && isAtFreeZoneTop(loc.entry.id)) {
       const prevIdx = loc.index - 1;
       const prev = prevIdx >= 0 ? PAGE_FLOW[prevIdx] : null;
-      if (prev && (prev.type === "pass" || prev.type === "free")) return;
+      if (
+        prev &&
+        (getEffectiveType(prev) === "pass" || getEffectiveType(prev) === "free")
+      )
+        return;
       e.preventDefault();
       this.killLenisVelocity();
       return;
@@ -754,22 +765,16 @@ export class ScrollEngine {
     const direction: "down" | "up" = diff > 0 ? "down" : "up";
     const type = this.getCurrentSectionType();
 
-    // mobile: scroll-up from about/ribbon → snap to faqs
-    if (
-      isMobileViewport() &&
-      direction === "up" &&
-      (type === "free" || type === "pass")
-    ) {
+    // mobile: swipe up from pass section → snap to previous
+    if (type === "pass" && direction === "up" && isMobileViewport()) {
       const loc = locateCurrentEntry(window.scrollY);
-      if (
-        loc &&
-        (loc.entry.id === "about" || loc.entry.id === "ribbon-section")
-      ) {
+      if (loc && loc.index > 0) {
+        const prev = PAGE_FLOW[loc.index - 1];
         this.killLenisVelocity();
         this.lenis.start();
-        this.snapTo("faqs", 0.8);
-        return;
+        this.snapTo(prev.id, 0.8);
       }
+      return;
     }
 
     if (type === "snap") {
@@ -784,14 +789,24 @@ export class ScrollEngine {
       if (direction === "down" && isAtFreeZoneBottom(loc.entry.id)) {
         const nextIdx = loc.index + 1;
         const next = nextIdx < PAGE_FLOW.length ? PAGE_FLOW[nextIdx] : null;
-        if (next && (next.type === "pass" || next.type === "free")) return;
+        if (
+          next &&
+          (getEffectiveType(next) === "pass" ||
+            getEffectiveType(next) === "free")
+        )
+          return;
         this.navigateFlow(direction);
         return;
       }
       if (direction === "up" && isAtFreeZoneTop(loc.entry.id)) {
         const prevIdx = loc.index - 1;
         const prev = prevIdx >= 0 ? PAGE_FLOW[prevIdx] : null;
-        if (prev && (prev.type === "pass" || prev.type === "free")) return;
+        if (
+          prev &&
+          (getEffectiveType(prev) === "pass" ||
+            getEffectiveType(prev) === "free")
+        )
+          return;
         this.navigateFlow(direction);
         return;
       }
