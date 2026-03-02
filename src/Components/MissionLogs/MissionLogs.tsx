@@ -55,7 +55,7 @@ const MissionLogs = () => {
               {/* description box (mobile) */}
               <div className="z-20 lg:hidden mt-1 pointer-events-auto">
                 <div className="bg-foreground text-orange-950 p-2.5 pt-2.5 pb-3 rounded-lg rounded-tr-none border border-white/10 shadow-2xl relative w-full flex flex-col justify-center">
-                  <p className="text-[10px] sm:text-[11px] md:text-sm font-medium leading-relaxed font-inter">
+                  <p className="text-[9px] sm:text-[11px] md:text-sm font-medium leading-relaxed font-inter">
                     <strong className="text-accent block mb-0.5">
                       Designathon 2.0: Spacebound
                     </strong>
@@ -73,7 +73,7 @@ const MissionLogs = () => {
             </div>
 
             {/* drill video (mobile) */}
-            <div className="w-[30%] max-w-[120px] aspect-[1/1.8] lg:hidden border border-primary/30 rounded-lg overflow-hidden backdrop-blur-sm z-20 flex-shrink-0 relative pointer-events-auto">
+            <div className="w-[30%] max-w-[120px] aspect-[1/2] lg:hidden border border-primary/30 rounded-lg overflow-hidden backdrop-blur-sm z-20 flex-shrink-0 relative pointer-events-auto">
               <video
                 src={assets.missionLogs.drill}
                 autoPlay
@@ -141,7 +141,7 @@ const MissionLogs = () => {
         <div className="flex flex-col p-3 px-5 lg:p-5 lg:pt-8 gap-3 lg:gap-3 z-20 pointer-events-none lg:pointer-events-auto mb-[60px] lg:mb-0 relative min-h-[140px] flex-shrink">
           <div className="flex justify-between items-end gap-2 pointer-events-auto lg:hidden h-full pb-3">
             {/* sponge card (mobile) */}
-            <div className="w-[65%] z-20 h-full flex items-end relative top-12">
+            <div className="w-[45%] z-20 h-full flex items-end relative top-12">
               <div className="w-full aspect-square max-h-[30vh] border border-primary/30 rounded-lg overflow-hidden relative bg-black/20 backdrop-blur-sm">
                 <div className="absolute top-1 left-1 w-1.5 h-1.5 border-t border-l border-primary/60 z-10" />
                 <div className="absolute bottom-1 right-1 w-1.5 h-1.5 border-b border-r border-primary/60 z-10" />

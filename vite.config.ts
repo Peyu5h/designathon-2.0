@@ -14,7 +14,7 @@ export default defineConfig({
     },
   },
   server: {
-    allowedHosts: ["cb4c-150-242-24-158.ngrok-free.app"],
+    allowedHosts: ["0785-150-242-24-158.ngrok-free.app"],
   },
   build: {
     target: "es2022",
